@@ -1,4 +1,4 @@
-[Ссылка на PR]()
+[Ссылка на PR](https://github.com/Belovus/middle.messenger.praktikum.yandex/pull/1)
 
 ## Описание
 
