@@ -10,7 +10,7 @@
 - [404](https://golden-bonbon-1c2cd9.netlify.app/404)
 - [Вход](https://golden-bonbon-1c2cd9.netlify.app/login)
 - [Регистрация](https://golden-bonbon-1c2cd9.netlify.app/registration)
-- [Профиль](https://gifted-thompson-3242a4.netlify.app/profile)
+- [Профиль](https://golden-bonbon-1c2cd9.netlify.app/profile)
 - [Чат](https://golden-bonbon-1c2cd9.netlify.app/chats)
 
 ## Установка
