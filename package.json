@@ -1,0 +1,37 @@
+{
+  "name": "middle.messenger.praktikum.yandex",
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": "14.18.2"
+  },
+  "scripts": {
+    "dev": "parcel --no-cache static/index.html",
+    "start": "node ./server.js",
+    "build": "parcel build static/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Belovus/middle.messenger.praktikum.yandex.git"
+  },
+  "targets": {
+    "web": {
+      "context": "browser",
+      "publicUrl": "./",
+      "distDir": "dist"
+    }
+  },
+  "keywords": [],
+  "author": "belov_a_v02@mail.ru",
+  "license": "ISC",
+  "dependencies": {
+    "parcel": "^2.3.2",
+    "handlebars": "^4.7.7"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.3.2",
+    "express": "^4.17.3",
+    "sass": "^1.49.8",
+    "@anikin/parcel-transformer-handlebars": "^1.0.9"
+  }
+}
