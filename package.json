@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "parcel --no-cache static/index.html",
-    "start": "node ./server.js",
+    "start": "npm run build && node ./server.js",
     "build": "parcel build static/index.html"
   },
   "repository": {
