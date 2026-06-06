@@ -22,3 +22,7 @@
 - `npm install` — установить зависимости,
 - `npm run start` — запустить сервер,
 - [http://localhost:3000](http://localhost:3000) — сервер запущен на порту 3000.
+
+## Production в Netlify
+
+Собранное приложение доступно по [ссылке](https://yandex-messenger-app.netlify.app/).
