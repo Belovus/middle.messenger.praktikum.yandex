@@ -1,0 +1,15 @@
+:root {
+  --color-primary: #3369F3;
+  --color-danger: #FF0000;
+
+  --color-text-muted: #999999;
+  --color-text-on-primary: #ffffff;
+
+  --color-bg-page: #FBFBFB;
+  --color-bg-subtle: #EFEFEF;
+
+  --color-border: #EAEAEA;
+
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 0 6px 0 #00000024;
+}

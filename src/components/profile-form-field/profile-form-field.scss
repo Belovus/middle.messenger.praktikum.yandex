@@ -1,7 +1,7 @@
 .profile-form-field {
   width: 510px;
   display: flex;
-  border-bottom: 1px solid #EAEAEA;
+  border-bottom: 1px solid var(--color-border);
 
   &__input {
     width: 100%;
