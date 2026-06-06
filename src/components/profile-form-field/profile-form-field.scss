@@ -1,0 +1,16 @@
+.profile-form-field {
+  width: 510px;
+  display: flex;
+  border-bottom: 1px solid #EAEAEA;
+
+  &__input {
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: right;
+  }
+
+  &__label {
+    white-space: nowrap;
+  }
+}
