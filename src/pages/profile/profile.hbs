@@ -1,0 +1,15 @@
+<div class="profile">
+    {{> BackBar }}
+    {{> AvatarEditor }}
+    <h2 class="profile__name">Иван</h2>
+    <div class="profile__fields">
+        {{#each config}}
+            {{> ProfileFormField }}
+        {{/each}}
+    </div>
+    <div class="profile__actions">
+        {{> Link text="Изменить данные" }}
+        {{> Link text="Изменить пароль" }}
+        {{> Link text="Выйти" isError=true }}
+    </div>
+</div>

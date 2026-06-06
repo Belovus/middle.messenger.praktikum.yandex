@@ -1,0 +1,15 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+
+  &__input {
+    border: none;
+    border-bottom: 1px solid #3369F3;
+    outline: none;
+    width: 100%;
+  }
+
+  &__label {
+    color: #999999;
+  }
+}
