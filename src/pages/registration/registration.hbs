@@ -1,0 +1,12 @@
+<main class="registration">
+    <h2>Регистрация</h2>
+    <form class="registration__form">
+        {{#each config}}
+            {{> AuthFormField}}
+        {{/each}}
+        <div class="registration__actions">
+            {{> Button type="submit" text="Зарегестрироваться" }}
+            {{> Link text="Войти" }}
+        </div>
+    </form>
+</main>

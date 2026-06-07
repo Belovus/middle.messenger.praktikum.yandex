@@ -1,0 +1,8 @@
+.link {
+  color: var(--color-primary);
+  text-decoration: none;
+
+  &__error {
+    color: var(--color-danger);
+  }
+}

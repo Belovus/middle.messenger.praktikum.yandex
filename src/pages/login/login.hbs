@@ -1,0 +1,12 @@
+<main class="login">
+    <h2>Вход</h2>
+    <form class="login__form">
+        {{#each config}}
+            {{> AuthFormField}}
+        {{/each}}
+        <div class="login__actions">
+            {{> Button text="Авторизоваться" }}
+            {{> Link type="submit" text="Нет аккаунта?" }}
+        </div>
+    </form>
+</main>

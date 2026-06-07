@@ -1,0 +1,28 @@
+.back-bar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 64px;
+  height: 100%;
+  background: var(--color-bg-page);
+  border-right: 1px solid var(--color-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__content {
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+  }
+
+  &__img {
+    width: 18px;
+    user-select: none;
+  }
+}

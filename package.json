@@ -1,0 +1,22 @@
+{
+  "name": "yandex-messenger",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.2",
+    "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.9",
+    "sass": "^1.100.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
