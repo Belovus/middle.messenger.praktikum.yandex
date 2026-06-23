@@ -1,4 +1,12 @@
 <div class="form-field">
     <label for="{{ id }}" class="form-field__label">{{ label }}</label>
-    <input id="{{ id }}" type="{{ type }}" name="{{ id }}" class="form-field__input">
+    <input
+        id="{{ id }}"
+        type="{{ type }}"
+        name="{{ id }}"
+        ref="{{ ref }}"
+        value="{{ value }}"
+        class="form-field__input {{#if error}}form-field__input--error{{/if}}"
+    />
+    <span class="form-field__error-message">{{ error }}</span>
 </div>

@@ -1,16 +1,30 @@
 .profile-form-field {
   width: 510px;
   display: flex;
-  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px solid var(--color-border);
 
   &__input {
     width: 100%;
     border: none;
     outline: none;
     text-align: right;
+    color: var(--color-text-muted);
+
+    &--error {
+      color: var(--color-danger);
+    }
   }
 
   &__label {
     white-space: nowrap;
+  }
+
+  &__hint-wrapper {
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

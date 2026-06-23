@@ -1,14 +1,11 @@
-import Handlebars from 'handlebars';
-import { LOGIN_CONFIG } from './configs/login-config.ts';
-import { REGISTRATION_CONFIG } from './configs/registration-config.ts';
-import { INTERNAL_SERVER_ERROR } from './configs/internal-server-error.ts';
-import { NOT_FOUND_ERROR } from './configs/not-found-error.ts';
+import { registerComponent } from './utils/registerComponent';
+
+import { LOGIN_CONFIG } from './configs/login-config';
+import { REGISTRATION_CONFIG } from './configs/registration-config';
 import { PROFILE_CONFIG } from './configs/profile-config.ts';
 import { CHANGE_PASSWORD_CONFIG } from './configs/change-password-config.ts';
-
 import { PLUG_CONFIG } from './configs/plug-config.ts';
 
-// Partials
 import { Button } from './components/button';
 import { AuthFormField } from './components/auth-form-field';
 import { Link } from './components/link';
@@ -16,79 +13,101 @@ import { BackBar } from './components/back-bar';
 import { AvatarEditor } from './components/avatar-editor';
 import { ProfileFormField } from './components/profile-form-field';
 import { ChatItem } from './components/chat-item';
+import { Message } from './components/message';
+import { Hint } from './components/hint';
 
-// Pages
-import { Login } from './pages/login';
-import { Registration } from './pages/registration';
-import { Error } from './pages/error';
-import { Profile } from './pages/profile';
-import { ChangePassword } from './pages/change-password';
-import { Chats } from './pages/chats';
+import { LoginView } from './views/login';
+import { RegistrationView } from './views/registration';
+import { ErrorView } from './views/error';
+import { ProfileView } from './views/profile';
+import { ChangePasswordView } from './views/change-password';
+import { ChatsView } from './views/chats';
+import { PlugView } from './views/plug';
 
-import { Plug } from './pages/plug';
+import { LoginController } from './controllers/login-controller.ts';
+import { LoginModel } from './models/login-model.ts';
+import { RegistrationController } from './controllers/registration-controller.ts';
+import { RegistrationModel } from './models/registration-model.ts';
+import { ErrorController } from './controllers/error-controller.ts';
+import { ErrorModel } from './models/error-model.ts';
+import { ChangePasswordController } from './controllers/change-password-controller.ts';
+import { ChangePasswordModel } from './models/change-password-model.ts';
+import { ProfileModel } from './models/profile-model.ts';
+import { ProfileController } from './controllers/profile-controller.ts';
+import { ChatsController } from './controllers/chats-controller.ts';
+import { ChatsModel } from './models/chats-model.ts';
 
 import './style.css';
 
-// Register partials
-Handlebars.registerPartial('Button', Button);
-Handlebars.registerPartial('AuthFormField', AuthFormField);
-Handlebars.registerPartial('Link', Link);
-Handlebars.registerPartial('BackBar', BackBar);
-Handlebars.registerPartial('AvatarEditor', AvatarEditor);
-Handlebars.registerPartial('ProfileFormField', ProfileFormField);
-Handlebars.registerPartial('ChatItem', ChatItem);
+registerComponent(Button);
+registerComponent(AuthFormField);
+registerComponent(Link);
+registerComponent(BackBar);
+registerComponent(AvatarEditor);
+registerComponent(ProfileFormField);
+registerComponent(ChatItem);
+registerComponent(Message);
+registerComponent(Hint);
 
 class App {
-  private state: any
-  private appElement: any
+  private state: { currentPage: string }
+  private appElement: HTMLElement
 
   constructor() {
     this.state = {
       currentPage: 'plug',
     }
-    this.appElement = document.getElementById('app');
+    const el = document.getElementById('app');
+    if (!el) throw new Error('#app root element not found');
+    this.appElement = el;
 
-    this.appElement.addEventListener('click', (event: any) => {
-      this.state.currentPage = event.target.getAttribute('data-href');
+    this.appElement.addEventListener('click', (event: Event) => {
+      const target = event.target as HTMLElement;
+      const href = target.getAttribute('data-href');
+      if (!href) return;
+      this.state.currentPage = href;
+      this.appElement.innerHTML = '';
       this.render();
     });
   }
 
   render() {
-    let template: any;
+    const append = (node: Node | null) => {
+      if (node) this.appElement.appendChild(node);
+    };
+
     if (this.state.currentPage === 'login') {
-      template = Handlebars.compile(Login);
-      this.appElement.innerHTML = template({ config: LOGIN_CONFIG });
+      const login = new LoginController(new LoginModel(), new LoginView({ config: LOGIN_CONFIG }));
+      append(login.getContent());
     }
     if (this.state.currentPage === 'registration') {
-      template = Handlebars.compile(Registration);
-      this.appElement.innerHTML = template({ config: REGISTRATION_CONFIG });
+      const registration = new RegistrationController(new RegistrationModel(), new RegistrationView({ config: REGISTRATION_CONFIG }));
+      append(registration.getContent());
     }
     if (this.state.currentPage === 'error-404') {
-      template = Handlebars.compile(Error);
-      this.appElement.innerHTML = template({ config: NOT_FOUND_ERROR });
+      const error = new ErrorController(new ErrorModel(), new ErrorView({ code: 404, text: 'Мы уже фиксим', link_text: 'Назад к чатам' }))
+      append(error.getContent());
     }
     if (this.state.currentPage === 'error-500') {
-      template = Handlebars.compile(Error);
-      this.appElement.innerHTML = template({ config: INTERNAL_SERVER_ERROR });
+      const error = new ErrorController(new ErrorModel(), new ErrorView({ code: 500, text: 'Мы уже фиксим', link_text: 'Назад к чатам' }))
+      append(error.getContent());
     }
     if (this.state.currentPage === 'change-password') {
-      template = Handlebars.compile(ChangePassword);
-      this.appElement.innerHTML = template({ config: CHANGE_PASSWORD_CONFIG });
+      const changePassword = new ChangePasswordController(new ChangePasswordModel(), new ChangePasswordView({ config: CHANGE_PASSWORD_CONFIG, edit: true }));
+      append(changePassword.getContent());
     }
     if (this.state.currentPage === 'profile') {
-      template = Handlebars.compile(Profile);
-      this.appElement.innerHTML = template({ config: PROFILE_CONFIG });
+      const profile = new ProfileController(new ProfileModel(), new ProfileView({ config: PROFILE_CONFIG, edit: false }));
+      append(profile.getContent());
     }
     if (this.state.currentPage === 'chats') {
-      template = Handlebars.compile(Chats);
-      this.appElement.innerHTML = template({});
+      const chats = new ChatsController(new ChatsModel(), new ChatsView({}));
+      append(chats.getContent());
     }
 
-
     if (this.state.currentPage === 'plug') {
-      template = Handlebars.compile(Plug);
-      this.appElement.innerHTML = template({ config: PLUG_CONFIG })
+      const plug = new PlugView({ config: PLUG_CONFIG });
+      append(plug.element());
     }
   }
 }

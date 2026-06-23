@@ -1,0 +1,31 @@
+<main class="profile">
+    {{{ BackBar }}}
+    {{{ AvatarEditor }}}
+    <h2 class="profile__name">Иван</h2>
+    <form class="profile__fields" ref="form">
+        {{#each config}}
+            {{{ ProfileFormField
+                    id=id
+                    label=label
+                    ref=id
+                    type=type
+                    edit=../edit
+            }}}
+        {{/each}}
+        {{#if edit}}
+            <div class="profile__submit">
+                {{{ Button text="Сохранить" type="submit" }}}
+                <div class="profile__cancel">
+                    {{{ Link text="Отменить" isError=true ref="cancel" }}}
+                </div>
+            </div>
+        {{/if}}
+    </form>
+    <div class="profile__actions">
+        {{#unless edit}}
+            {{{ Link text="Изменить данные" ref="editLink" }}}
+            {{{ Link text="Изменить пароль" }}}
+            {{{ Link text="Выйти" isError=true }}}
+        {{/unless}}
+    </div>
+</main>
