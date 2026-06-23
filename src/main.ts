@@ -37,7 +37,7 @@ import { ProfileController } from './controllers/profile-controller.ts';
 import { ChatsController } from './controllers/chats-controller.ts';
 import { ChatsModel } from './models/chats-model.ts';
 
-import './style.css';
+import './style.scss';
 
 registerComponent(Button);
 registerComponent(AuthFormField);
