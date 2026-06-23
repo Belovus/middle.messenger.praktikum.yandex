@@ -1,4 +1,17 @@
 <div class="profile-form-field">
     <label class="profile-form-field__label" for="{{ id }}">{{ label }}</label>
-    <input type="text" class="profile-form-field__input" name={{ id }} id="{{ id }}" />
+    {{#if error}}
+        <div class="profile-form-field__hint-wrapper">
+            {{{ Hint error=error }}}
+        </div>
+    {{/if}}
+    <input
+        type="{{ type }}"
+        class="profile-form-field__input {{#if error}}profile-form-field__input--error{{/if}}"
+        name="{{ id }}"
+        id="{{ id }}"
+        value="{{ value }}"
+        ref="{{ ref }}"
+        {{#unless edit }}disabled="disabled"{{/unless}}
+    />
 </div>

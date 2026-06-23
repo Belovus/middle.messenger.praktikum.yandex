@@ -1,0 +1,28 @@
+.hint {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &__img {
+    width: 14px;
+    height: 14px;
+  }
+
+  &__text {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    box-shadow: var(--shadow-card);
+    border-radius: 8px;
+    white-space: nowrap;
+    background-color: var(--color-bg-white);
+  }
+
+  &:hover &__text {
+    display: block;
+  }
+}

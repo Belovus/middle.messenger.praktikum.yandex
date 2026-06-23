@@ -1,0 +1,12 @@
+<main class="login">
+    <h2>Вход</h2>
+    <form class="login__form">
+        {{#each config}}
+            {{{ AuthFormField label=label id=id type=type ref=id }}}
+        {{/each}}
+        <div class="login__actions">
+            {{{ Button type="submit" text="Авторизоваться" }}}
+            {{{ Link text="Нет аккаунта?" }}}
+        </div>
+    </form>
+</main>
