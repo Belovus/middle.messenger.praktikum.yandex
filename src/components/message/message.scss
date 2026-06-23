@@ -1,0 +1,32 @@
+.message {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 8px;
+  width: fit-content;
+  max-width: 40%;
+  align-self: flex-start;
+  background: var(--color-bg-subtle-dark);
+  border-radius: 0 8px 8px;
+  color: var(--color-text-primary-dark);
+  padding: 10px;
+  margin-bottom: 10px;
+
+  &__own {
+    align-self: flex-end;
+    background: var(--color-bg-primary-transparent);
+    border-radius: 8px 8px 0;
+  }
+
+  &__text {
+    margin: 0;
+    overflow-wrap: break-word;
+  }
+
+  &__meta {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 11px;
+    color: var(--color-text-muted);
+    line-height: 1;
+  }
+}

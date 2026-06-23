@@ -1,0 +1,93 @@
+<main class="chats">
+    <div class="chats__left-panel">
+        <div class="chats__link">
+            <a>Профиль</a>
+            <img src="../../../static/chats-arrow.svg" alt="arrow" />
+        </div>
+        <div class="chats__filter">
+            <label>
+                <input type="text" class="chats__filter-input" placeholder="Поиск" />
+            </label>
+        </div>
+        <ul class="chats__list">
+            <div class="chats__divider"></div>
+            {{{ ChatItem }}}
+            <div class="chats__divider"></div>
+            {{{ ChatItem }}}
+            <div class="chats__divider"></div>
+            {{{ ChatItem }}}
+            <div class="chats__divider"></div>
+            {{{ ChatItem }}}
+            <div class="chats__divider"></div>
+            {{{ ChatItem }}}
+            <div class="chats__divider"></div>
+            {{{ ChatItem }}}
+            <div class="chats__divider"></div>
+        </ul>
+    </div>
+    <div class="chat">
+        <div class="chat__header">
+            <div class="chat__header-avatar"></div>
+            <h3 class="chat__header-name">Вадим</h3>
+            <div class="chat__header-options">
+                <img src="../../../static/profile-header-dots.svg" alt="dots" />
+                <div class="chat__header-options-list-wrapper">
+                    <ul class="chat__header-options-list">
+                       <li>
+                           <div class="chat__header-options-img">
+                               <img src="../../../static/add.svg" alt="add" />
+                           </div>
+                           <span>Добавить пользователя</span>
+                       </li>
+                        <div class="chat__header-options-divider"></div>
+                       <li>
+                           <div class="chat__header-options-img">
+                               <img src="../../../static/delete.svg" alt="delete" />
+                           </div>
+                           <span>Удалить пользователя</span>
+                       </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="chat__body">
+            <div class="chat__body-date">
+                <p class="chat__body-date-text">19 июня</p>
+            </div>
+            {{{ Message
+                message="Привет! Смотри, тут всплыл интересный кусок лунной космической истории — НАСА в какой-то момент попросила Хассельблад адаптировать модель SWC для полетов на Луну. Сейчас мы все знаем что астронавты летали с моделью 500 EL — и к слову говоря, все тушки этих камер все еще находятся на поверхности Луны, так как астронавты с собой забрали только кассеты с пленкой.
+
+Хассельблад в итоге адаптировал SWC для космоса, но что-то пошло не так и на ракету они так никогда и не попали. Всего их было произведено 25 штук, одну из них недавно продали на аукционе за 45000 евро."
+                time="11:56"
+            }}}
+            {{{ Message message="Круто!" isOwn=true time="12:00" }}}
+        </div>
+        <form class="chat__footer">
+            <div class="chat__footer-options">
+                <div class="chat__footer-option-list-wrapper">
+                    <ul class="chat__footer-options-list">
+                        <li>
+                            <img src="../../../static/photo-or-video.svg" alt="photo" />
+                            <span>Фото или видео</span>
+                        </li>
+                        <div class="chat__footer-options-divider"></div>
+                        <li>
+                            <img src="../../../static/file.svg" alt="file" />
+                            <span>Файл</span>
+                        </li>
+                        <div class="chat__footer-options-divider"></div>
+                        <li>
+                            <img src="../../../static/location.svg" alt="location" />
+                            <span>Локация</span>
+                        </li>
+                    </ul>
+                </div>
+                <img src="../../../static/profile-footer-clip.svg" alt="clip" />
+            </div>
+            <input type="text" class="chat__footer-input" placeholder="Сообщение" name="message" />
+            <button class="chat__footer-send-button" type="submit">
+                <img src="../../../static/arrow.svg" alt="send" />
+            </button>
+        </form>
+    </div>
+</main>

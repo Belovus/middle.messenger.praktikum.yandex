@@ -1,2 +1,2 @@
-export { default as BackBar } from './back-bar.hbs?raw';
+export { default as BackBar } from './back-bar';
 import './back-bar.scss';

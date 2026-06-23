@@ -3,8 +3,8 @@ button {
   width: 100%;
   border-radius: 8px;
   text-align: center;
-  color: white;
-  background: #3369F3;
+  color: var(--color-text-on-primary);
+  background: var(--color-primary);
   border: none;
   cursor: pointer;
 }
