@@ -2,11 +2,11 @@
     <h2>Вход</h2>
     <form class="login__form">
         {{#each config}}
-            {{{ AuthFormField label=label id=id type=type ref=id }}}
+            {{{ AuthFormField id=id label=label type=type ref=id }}}
         {{/each}}
         <div class="login__actions">
             {{{ Button type="submit" text="Авторизоваться" }}}
-            {{{ Link text="Нет аккаунта?" }}}
+            {{{ Link text="Нет аккаунта?" ref="registrationLink" }}}
         </div>
     </form>
 </main>

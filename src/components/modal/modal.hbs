@@ -1,0 +1,10 @@
+<div class="overlay{{#if isOpen}} overlay--open{{/if}}">
+    <div class="modal">
+        <img class="modal__cross" src="../../../static/cross.svg" ref="{{ crossRef }}" alt="close" />
+        <h2 class="modal__title">{{ title }}</h2>
+        <form class="modal__form" ref="{{ formRef }}">
+            {{{ AuthFormField id=fieldId label=label type=type ref=fieldRef }}}
+            {{{ Button text=buttonText type="submit" ref=submitRef }}}
+        </form>
+    </div>
+</div>

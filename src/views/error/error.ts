@@ -11,4 +11,12 @@ export class ErrorView extends Block<ErrorProps> {
   static componentName = 'Error';
 
   protected template = ErrorHTML;
+
+  protected events = {
+    click: (event: Event) => {
+      if (this.refs.chatsLink === event.target) {
+        this.emit('error:go-chats');
+      }
+    }
+  }
 }

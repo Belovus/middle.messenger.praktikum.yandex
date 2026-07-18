@@ -1,53 +1,58 @@
 <main class="chats">
     <div class="chats__left-panel">
-        <div class="chats__link">
-            <a>Профиль</a>
-            <img src="../../../static/chats-arrow.svg" alt="arrow" />
+        <div class="chats__link-wrapper">
+            <div class="chats__link" ref="settingsLink">
+                <a>Профиль</a>
+                <img src="../../../static/chats-arrow.svg" alt="arrow" />
+            </div>
         </div>
         <div class="chats__filter">
             <label>
                 <input type="text" class="chats__filter-input" placeholder="Поиск" />
             </label>
         </div>
+        <div class="chats__create-chat">
+            <button ref="createChatButton">Создать чат</button>
+        </div>
         <ul class="chats__list">
+            {{#each chats}}
             <div class="chats__divider"></div>
-            {{{ ChatItem }}}
+            {{{ ChatItem
+                id=id
+                title=title
+                message=message
+                time=time
+                avatar=avatar
+                unreadCount=unreadCount
+                selected=selected
+            }}}
+            {{/each}}
+            {{#unless chats.length}}
             <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
+            {{/unless}}
         </ul>
     </div>
     <div class="chat">
         <div class="chat__header">
             <div class="chat__header-avatar"></div>
             <h3 class="chat__header-name">Вадим</h3>
-            <div class="chat__header-options">
-                <img src="../../../static/profile-header-dots.svg" alt="dots" />
-                <div class="chat__header-options-list-wrapper">
-                    <ul class="chat__header-options-list">
-                       <li>
-                           <div class="chat__header-options-img">
-                               <img src="../../../static/add.svg" alt="add" />
-                           </div>
-                           <span>Добавить пользователя</span>
-                       </li>
-                        <div class="chat__header-options-divider"></div>
-                       <li>
-                           <div class="chat__header-options-img">
-                               <img src="../../../static/delete.svg" alt="delete" />
-                           </div>
-                           <span>Удалить пользователя</span>
-                       </li>
-                    </ul>
-                </div>
+            <div class="chat__header-options" ref="headerOptions">
+                <img src="../../../static/profile-header-dots.svg" alt="dots" ref="headerOptionsToggle" />
+                <ul class="chat__header-options-list{{#if isHeaderOptionsListOpen}} chat__header-options-list--open{{/if}}">
+                    <li ref="addUserOption">
+                        <div class="chat__header-options-img">
+                            <img src="../../../static/add.svg" alt="add" />
+                        </div>
+                        <span>Добавить пользователя</span>
+                    </li>
+                    <div class="chat__header-options-divider"></div>
+                    <li ref="removeUserOption">
+                        <div class="chat__header-options-img">
+                            <img src="../../../static/delete.svg" alt="delete" />
+                        </div>
+                        <span>Удалить пользователя</span>
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="chat__body">
@@ -63,26 +68,24 @@
             {{{ Message message="Круто!" isOwn=true time="12:00" }}}
         </div>
         <form class="chat__footer">
-            <div class="chat__footer-options">
-                <div class="chat__footer-option-list-wrapper">
-                    <ul class="chat__footer-options-list">
-                        <li>
-                            <img src="../../../static/photo-or-video.svg" alt="photo" />
-                            <span>Фото или видео</span>
-                        </li>
-                        <div class="chat__footer-options-divider"></div>
-                        <li>
-                            <img src="../../../static/file.svg" alt="file" />
-                            <span>Файл</span>
-                        </li>
-                        <div class="chat__footer-options-divider"></div>
-                        <li>
-                            <img src="../../../static/location.svg" alt="location" />
-                            <span>Локация</span>
-                        </li>
-                    </ul>
-                </div>
-                <img src="../../../static/profile-footer-clip.svg" alt="clip" />
+            <div class="chat__footer-options" ref="bottomOptions">
+                <ul class="chat__footer-options-list{{#if isBottomOptionsListOpen}} chat__footer-options-list--open{{/if}}">
+                    <li>
+                        <img src="../../../static/photo-or-video.svg" alt="photo" />
+                        <span>Фото или видео</span>
+                    </li>
+                    <div class="chat__footer-options-divider"></div>
+                    <li>
+                        <img src="../../../static/file.svg" alt="file" />
+                        <span>Файл</span>
+                    </li>
+                    <div class="chat__footer-options-divider"></div>
+                    <li>
+                        <img src="../../../static/location.svg" alt="location" />
+                        <span>Локация</span>
+                    </li>
+                </ul>
+                <img src="../../../static/profile-footer-clip.svg" alt="clip" ref="bottomOptionsToggle" />
             </div>
             <input type="text" class="chat__footer-input" placeholder="Сообщение" name="message" />
             <button class="chat__footer-send-button" type="submit">
@@ -90,4 +93,40 @@
             </button>
         </form>
     </div>
+
+    {{{ Modal
+        isOpen=(equal activeModal "createChat")
+        title="Создать чат"
+        label="Название чата"
+        fieldId="title"
+        type="text"
+        buttonText="Создать"
+        crossRef="createChatCross"
+        formRef="createChatForm"
+        fieldRef="title"
+    }}}
+
+    {{{ Modal
+        isOpen=(equal activeModal "addUser")
+        title="Добавить пользователя"
+        label="Логин пользователя"
+        fieldId="login"
+        type="text"
+        buttonText="Добавить"
+        crossRef="addUserCross"
+        formRef="addUserForm"
+        fieldRef="login"
+    }}}
+
+    {{{ Modal
+        isOpen=(equal activeModal "removeUser")
+        title="Удалить пользователя"
+        label="Логин пользователя"
+        fieldId="login"
+        type="text"
+        buttonText="Удалить"
+        crossRef="removeUserCross"
+        formRef="removeUserForm"
+        fieldRef="removeUserLogin"
+    }}}
 </main>

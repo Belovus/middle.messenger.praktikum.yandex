@@ -3,7 +3,7 @@ import type { HelperOptions } from 'handlebars';
 import { v4 as uuidv4 } from 'uuid';
 import type { Block, BlockOwnProps } from '../core/block.ts';
 
-type Component<Props extends BlockOwnProps = BlockOwnProps> = {
+export type Component<Props extends BlockOwnProps = BlockOwnProps> = {
   new (props: Props): Block<Props>;
   componentName: string;
 };
