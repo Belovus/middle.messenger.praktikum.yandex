@@ -1,3 +1,6 @@
+import { router } from "../main.ts";
+import AuthController from '../controllers/auth-controller.ts';
+
 interface IRoutable {
   getContent(): Node | null;
 }
@@ -6,16 +9,18 @@ class Route {
   _pathname: string;
   _blockClass: () => IRoutable;
   _block: IRoutable | null;
+  _guard: boolean;
   _props: {
     rootQuery: string;
   }
 
 
-  constructor(pathname: string, view: () => IRoutable, props: { rootQuery: string }) {
+  constructor(pathname: string, view: () => IRoutable, guard: boolean, props: { rootQuery: string }) {
     this._pathname = pathname;
     this._blockClass = view;
     this._block = null;
     this._props = props;
+    this._guard = guard;
   }
 
   navigate(pathname: string) {
@@ -70,8 +75,8 @@ export class Router {
     Router.__instance = this;
   }
 
-  use(pathname: string, block: () => IRoutable) {
-    const route = new Route(pathname, block, { rootQuery: this._rootQuery });
+  use(pathname: string, block: () => IRoutable, guard: boolean) {
+    const route = new Route(pathname, block, guard, { rootQuery: this._rootQuery });
     this.routes.push(route);
     return this;
   }
@@ -88,6 +93,11 @@ export class Router {
     const route = this.getRoute(pathname);
 
     if (!route) {
+      return;
+    }
+
+    if (route._guard && !AuthController.isAuthenticated()) {
+      router.go('/');
       return;
     }
 

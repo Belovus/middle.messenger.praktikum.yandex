@@ -83,6 +83,11 @@ export class ChatsView extends Block<ChatsViewProps> {
         return;
       }
 
+      if (this.refs.removeChatOption?.contains(target)) {
+        this.emit('chats:remove-chat', this.props.selectedChatId)
+        this.setProps({ isHeaderOptionsListOpen: false })
+      }
+
       if (this.refs.headerOptionsToggle?.contains(target)) {
         this.setProps({ isHeaderOptionsListOpen: !this.props.isHeaderOptionsListOpen });
         return;

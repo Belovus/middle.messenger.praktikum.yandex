@@ -41,6 +41,10 @@ export class ChatsController {
     this.view.on('chats:select-chat', (chatId) => {
       this.onSelectChat(chatId as number);
     });
+
+    this.view.on('chats:remove-chat', (chatId) => {
+      this.onRemoveChat(chatId as number);
+    })
   }
 
   loadChats() {
@@ -116,13 +120,22 @@ export class ChatsController {
       });
   }
 
+  onRemoveChat(chatId: number) {
+    this.model.removeChat(chatId).then(() => {
+      this.loadChats();
+    })
+  }
+
   private updateChatsList(chats: Chat[]) {
-    const selectedChatId = this.view.getSelectedChatId();
+    const currentSelectedId = this.view.getSelectedChatId();
+    const selectedChatId = chats.some(chat => chat.id === currentSelectedId)
+      ? currentSelectedId
+      : (chats[0]?.id ?? null);
     const chatList = chats.map((chat) => this.mapChatToListItem(chat, selectedChatId));
 
     this.view.setProps({
       chats: chatList,
-      selectedChatId: selectedChatId ?? chatList[0]?.id ?? null,
+      selectedChatId: selectedChatId,
     });
   }
 

@@ -25,4 +25,8 @@ export class ChatsModel extends EventBus {
   async removeUsersFromChat(data: { users: number[]; chatId: number }) {
     return ChatsApi.delete('/chats/users', { data: data as Record<string, unknown> });
   }
+
+  async removeChat(chatId: number) {
+    return ChatsApi.delete('/chats', { data: { chatId } });
+  }
 }
