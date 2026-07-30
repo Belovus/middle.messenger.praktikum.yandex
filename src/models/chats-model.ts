@@ -1,7 +1,7 @@
 import { EventBus } from '../core/event-bus.ts';
 import HttpTransport from '../core/http-transport.ts';
 
-import type { Chat } from '../types/api.ts';
+import type { Chat, ChatUsersResponse } from '../types/api.ts';
 
 const ChatsApi = new HttpTransport();
 
@@ -28,5 +28,16 @@ export class ChatsModel extends EventBus {
 
   async removeChat(chatId: number) {
     return ChatsApi.delete('/chats', { data: { chatId } });
+  }
+
+  async getChatUsers(chatId: number) {
+    return ChatsApi.get(`/chats/${chatId}/users`) as Promise<ChatUsersResponse[]>;
+  }
+
+  async changeAvatar(data: { chatId: number; avatar: File }) {
+    const formData = new FormData();
+    formData.append('chatId', String(data.chatId))
+    formData.append('avatar', data.avatar);
+    return ChatsApi.put('/chats/avatar', { data: formData });
   }
 }

@@ -66,7 +66,7 @@ router
   .use("/", () => new LoginController(new LoginModel(), new LoginView({ config: LOGIN_CONFIG })), false)
   .use("/sign-up", () => new RegistrationController(new RegistrationModel(), new RegistrationView({ config: REGISTRATION_CONFIG })), false)
   .use("/settings", () => new SettingsController(new SettingsModel(), new SettingsView({ config: SETTINGS_CONFIG, edit: false, type: 'SETTINGS' })), true)
-  .use("/messenger", () => new ChatsController(new ChatsModel(), new ChatsView({ chats: [] })), true)
+  .use("/messenger", () => new ChatsController(new ChatsModel(), new ChatsView({})), true)
   .use("/404", () => new ErrorController(new ErrorModel(), new ErrorView({ code: 404, text: 'Мы уже фиксим', link_text: 'Назад к чатам' })), false)
   .use("/500", () => new ErrorController(new ErrorModel(), new ErrorView({ code: 500, text: 'Мы уже фиксим', link_text: 'Назад к чатам' })), false)
   .start()
