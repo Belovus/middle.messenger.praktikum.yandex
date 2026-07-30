@@ -41,6 +41,14 @@ export class ChatsController {
     this.view.on('chats:select-chat', (chatId) => {
       this.onSelectChat(chatId as number);
     });
+
+    this.view.on('chats:remove-chat', (chatId) => {
+      this.onRemoveChat(chatId as number);
+    })
+
+    this.view.on('chats:change-avatar', (data) => {
+      this.onChangeAvatar(data as { chatId: number, avatar: File });
+    })
   }
 
   loadChats() {
@@ -58,6 +66,10 @@ export class ChatsController {
       ...chat,
       selected: chat.id === chatId,
     }));
+
+    this.model.getChatUsers(chatId).then((users) => {
+      this.view.setProps({ chatUsers: users, chatUsersCount: users.length });
+    })
 
     this.view.setProps({
       selectedChatId: chatId,
@@ -112,17 +124,41 @@ export class ChatsController {
         return this.model.removeUsersFromChat({ users: [userId], chatId });
       })
       .then(() => {
+        this.loadChats();
         this.view.setProps({ activeModal: null });
       });
   }
 
+  onRemoveChat(chatId: number) {
+    this.model.removeChat(chatId).then(() => {
+      this.loadChats();
+    })
+  }
+
+  onChangeAvatar({ chatId, avatar }: { chatId: number, avatar: File }) {
+    this.model.changeAvatar({ chatId, avatar }).then((chat) => {
+      const avatar = (chat as Chat).avatar;
+      this.view.setProps({ chatAvatar: getResourceLink(avatar) });
+      this.loadChats();
+    })
+  }
+
   private updateChatsList(chats: Chat[]) {
-    const selectedChatId = this.view.getSelectedChatId();
+    const currentSelectedId = this.view.getSelectedChatId();
+    const selectedChatId = chats.some(chat => chat.id === currentSelectedId)
+      ? currentSelectedId
+      : (chats[0]?.id ?? null);
     const chatList = chats.map((chat) => this.mapChatToListItem(chat, selectedChatId));
+
+    if (selectedChatId) {
+      this.onSelectChat(selectedChatId);
+    }
 
     this.view.setProps({
       chats: chatList,
-      selectedChatId: selectedChatId ?? chatList[0]?.id ?? null,
+      selectedChatId: selectedChatId,
+      chatTitle: chatList.find((chat) => chat.id === selectedChatId)?.title,
+      chatAvatar: chatList.find((chat) => chat.id === selectedChatId)?.avatar,
     });
   }
 

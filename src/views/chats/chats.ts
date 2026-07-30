@@ -2,7 +2,7 @@ import { Block } from '../../core/block.ts';
 import ChatsHTML from './chats.hbs?raw';
 import { formDataToJSON } from '../../utils/formDataToJSON.ts';
 
-import type { ChatListItem } from '../../types/api.ts';
+import type { ChatListItem, ChatUsersResponse } from '../../types/api.ts';
 
 export type ActiveModal = 'createChat' | 'addUser' | 'removeUser' | null;
 
@@ -10,8 +10,13 @@ interface ChatsViewProps {
   activeModal?: ActiveModal;
   selectedChatId?: number | null;
   isHeaderOptionsListOpen?: boolean;
+  isHeaderInfoOptionsListOpen?: boolean;
   isBottomOptionsListOpen?: boolean;
   chats?: ChatListItem[];
+  chatUsers?: ChatUsersResponse[];
+  chatUsersCount?: number;
+  chatTitle?: string;
+  chatAvatar?: string;
 }
 
 export class ChatsView extends Block<ChatsViewProps> {
@@ -20,6 +25,7 @@ export class ChatsView extends Block<ChatsViewProps> {
   protected template = ChatsHTML;
 
   protected componentDidMount() {
+    //ToDo Fix me
     if (this.props.chats?.length === 0) {
       this.emit('chats:load');
     }
@@ -62,7 +68,6 @@ export class ChatsView extends Block<ChatsViewProps> {
       const target = event.target as HTMLElement;
 
       const chatItem = target.closest('[data-chat-id]');
-
       if (chatItem) {
         const chatId = Number(chatItem.getAttribute('data-chat-id'));
 
@@ -71,6 +76,12 @@ export class ChatsView extends Block<ChatsViewProps> {
         }
 
         return;
+      }
+
+      const userOptionsItem = target.closest('[data-user-login]');
+      if (userOptionsItem) {
+        const userLogin = String(userOptionsItem.getAttribute('data-user-login'));
+        this.emit('chats:remove-user', { login: userLogin });
       }
 
       if (this.refs.addUserOption?.contains(target)) {
@@ -83,6 +94,11 @@ export class ChatsView extends Block<ChatsViewProps> {
         return;
       }
 
+      if (this.refs.removeChatOption?.contains(target)) {
+        this.emit('chats:remove-chat', this.props.selectedChatId)
+        this.setProps({ isHeaderOptionsListOpen: false })
+      }
+
       if (this.refs.headerOptionsToggle?.contains(target)) {
         this.setProps({ isHeaderOptionsListOpen: !this.props.isHeaderOptionsListOpen });
         return;
@@ -90,6 +106,11 @@ export class ChatsView extends Block<ChatsViewProps> {
 
       if (this.refs.bottomOptionsToggle?.contains(target)) {
         this.setProps({ isBottomOptionsListOpen: !this.props.isBottomOptionsListOpen });
+        return;
+      }
+
+      if (this.refs.infoOptionsList?.contains(target)) {
+        this.setProps({ isHeaderInfoOptionsListOpen: !this.props.isHeaderInfoOptionsListOpen })
         return;
       }
 
@@ -115,7 +136,17 @@ export class ChatsView extends Block<ChatsViewProps> {
       if (this.props.isBottomOptionsListOpen) {
         this.setProps({ isBottomOptionsListOpen: false });
       }
+
+      if (this.props.isHeaderInfoOptionsListOpen && !this.refs.infoOptionsListBlock?.contains(target)) {
+        this.setProps({ isHeaderInfoOptionsListOpen: false });
+      }
     },
+    change: (event: Event): void => {
+      const file = event.target as HTMLInputElement;
+      if (file.files) {
+        this.emit('chats:change-avatar', { chatId: this.props.selectedChatId, avatar: file.files[0] });
+      }
+    }
   };
 
   private isModalCloseClick(target: HTMLElement) {

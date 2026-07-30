@@ -122,10 +122,18 @@ class HttpTransport {
 
           resolve(response);
         } else {
+
+          let response;
+          try {
+            response = JSON.parse(xhr.responseText);
+          } catch (e) {
+            response = xhr.responseText;
+          }
+
           reject({
             status: xhr.status,
             statusText: xhr.statusText,
-            response: xhr.responseText,
+            response,
             request: xhr
           });
         }

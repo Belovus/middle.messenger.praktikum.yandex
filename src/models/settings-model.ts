@@ -21,4 +21,8 @@ export class SettingsModel extends EventBus {
   async exit() {
     return await SettingsApi.post('/auth/logout');
   }
+
+  async changeAvatar(data: FormData) {
+    return SettingsApi.put('/user/profile/avatar', { data });
+  }
 }

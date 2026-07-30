@@ -32,6 +32,7 @@ import { RegistrationController } from './controllers/registration-controller.ts
 import { ErrorController } from './controllers/error-controller.ts';
 import { SettingsController } from './controllers/settings-controller.ts';
 import { ChatsController } from './controllers/chats-controller.ts';
+import AuthController from './controllers/auth-controller.ts';
 
 // Models
 import { RegistrationModel } from './models/registration-model.ts';
@@ -59,12 +60,13 @@ registerComponent(Hint);
 registerComponent(Modal);
 
 export const router = new Router("#app");
+await AuthController.checkAuth();
 
 router
-  .use("/", () => new LoginController(new LoginModel(), new LoginView({ config: LOGIN_CONFIG })))
-  .use("/sign-up", () => new RegistrationController(new RegistrationModel(), new RegistrationView({ config: REGISTRATION_CONFIG })))
-  .use("/settings", () => new SettingsController(new SettingsModel(), new SettingsView({ config: SETTINGS_CONFIG, edit: false, type: 'SETTINGS' })))
-  .use("/messenger", () => new ChatsController(new ChatsModel(), new ChatsView({ chats: [] })))
-  .use("/404", () => new ErrorController(new ErrorModel(), new ErrorView({ code: 404, text: 'Мы уже фиксим', link_text: 'Назад к чатам' })))
-  .use("/500", () => new ErrorController(new ErrorModel(), new ErrorView({ code: 500, text: 'Мы уже фиксим', link_text: 'Назад к чатам' })))
+  .use("/", () => new LoginController(new LoginModel(), new LoginView({ config: LOGIN_CONFIG })), false)
+  .use("/sign-up", () => new RegistrationController(new RegistrationModel(), new RegistrationView({ config: REGISTRATION_CONFIG })), false)
+  .use("/settings", () => new SettingsController(new SettingsModel(), new SettingsView({ config: SETTINGS_CONFIG, edit: false, type: 'SETTINGS' })), true)
+  .use("/messenger", () => new ChatsController(new ChatsModel(), new ChatsView({})), true)
+  .use("/404", () => new ErrorController(new ErrorModel(), new ErrorView({ code: 404, text: 'Мы уже фиксим', link_text: 'Назад к чатам' })), false)
+  .use("/500", () => new ErrorController(new ErrorModel(), new ErrorView({ code: 500, text: 'Мы уже фиксим', link_text: 'Назад к чатам' })), false)
   .start()

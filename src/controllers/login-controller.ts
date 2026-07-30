@@ -1,4 +1,5 @@
 import { router } from '../main.ts';
+import AuthController from './auth-controller.ts';
 
 import type { LoginView as LoginViewType } from '../views/login';
 import type { LoginModel as LoginModelType } from '../models/login-model';
@@ -21,12 +22,19 @@ export class LoginController {
     this.view.on('login:auth', (data) => this.onAuth(data as SignInRequest));
   }
 
-  onAuth(data: SignInRequest) {
-    this.model.auth(data).then((result) => {
+  async onAuth(data: SignInRequest) {
+    try {
+      const result = await this.model.auth(data);
       if (result === 'OK') {
+        await AuthController.checkAuth();
         router.go('/messenger');
       }
-    });
+    } catch (error) {
+      const err = error as { response?: { reason?: string } };
+      if (err.response?.reason === 'User already in system') {
+        router.go('/messenger');
+      }
+    }
   }
 
   getModel() {

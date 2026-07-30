@@ -1,7 +1,7 @@
 <main class="profile">
     {{{ BackBar ref="chatsLink" }}}
-    {{{ AvatarEditor }}}
-    <h2 class="profile__name">Иван</h2>
+    {{{ AvatarEditor avatar=settings.avatar }}}
+    <h2 class="profile__name">{{ settings.first_name }}</h2>
     <form class="profile__fields" ref="form">
         {{#if (equal type "SETTINGS")}}
             {{#each config.settings}}

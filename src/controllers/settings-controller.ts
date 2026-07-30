@@ -3,6 +3,7 @@ import { router } from '../main.ts';
 import type { SettingsView as SettingsViewType } from '../views/settings';
 import type { SettingsModel as SettingsModelType } from '../models/settings-model.ts';
 import type { UserResponse, UserUpdateRequest, ChangePasswordRequest } from '../types/api.ts';
+import { getResourceLink } from "../utils/getResourceLink.ts";
 
 export class SettingsController {
   private view: SettingsViewType;
@@ -35,6 +36,10 @@ export class SettingsController {
     this.view.on('settings:exit', () => {
       this.onExit();
     })
+
+    this.view.on('settings:change-avatar', (data) => {
+      this.onChangeAvatar(data as { avatar: File });
+    })
   }
 
   onSettingsUpdate(data: UserUpdateRequest) {
@@ -51,6 +56,7 @@ export class SettingsController {
 
   onLoad() {
     this.model.load().then((result) => {
+      (result as UserResponse).avatar = getResourceLink((result as UserResponse).avatar);
       this.view.setProps({ settings: result as UserResponse });
     });
   }
@@ -61,6 +67,14 @@ export class SettingsController {
         router.go('/');
       }
     });
+  }
+
+  onChangeAvatar(data: { avatar: File }) {
+    const formData = new FormData();
+    formData.append('avatar', data.avatar);
+    this.model.changeAvatar(formData).then(() => {
+      this.onLoad();
+    })
   }
 
   getModel() {
