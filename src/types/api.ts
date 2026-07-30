@@ -51,3 +51,13 @@ export interface Chat {
   unread_count: number;
   last_message: ChatLastMessage;
 }
+
+export interface ChatUsersResponse {
+  id: number;
+  avatar: string;
+  display_name: string;
+  first_name: string;
+  second_name: string;
+  role: string;
+  login: string;
+}

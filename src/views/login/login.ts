@@ -22,9 +22,6 @@ export class LoginView extends Block<LoginProps> {
 
       this.emit('login:auth', formDataToJSON(loginFormData));
     },
-    focusout: (event: Event) => {
-      this.validateOne(event);
-    },
     click: (event: Event) => {
       const target = event.target as HTMLLinkElement;
       if (this.refs.registrationLink === target) {

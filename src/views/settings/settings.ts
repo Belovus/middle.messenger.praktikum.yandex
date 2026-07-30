@@ -65,6 +65,13 @@ export class SettingsView extends Block<SettingsProps> {
     },
     focusout: (event: Event) => {
       this.validateOne(event);
+    },
+    change: (event: Event) => {
+      const file = event.target as HTMLInputElement;
+      console.log(file.files);
+      if (file.files) {
+        this.emit('settings:change-avatar', { avatar: file.files[0] });
+      }
     }
   }
 }

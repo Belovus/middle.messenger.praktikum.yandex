@@ -1,3 +1,7 @@
-<div class="avatar-editor">
-    <img src="../../../static/avatar.svg" alt="avatar" />
+<div
+    class="avatar-editor {{#if (equal size "small")}}avatar-editor--small{{/if}}"
+    {{#if avatar}}style="background-image: url('{{avatar}}'); background-size: cover;"{{/if}}
+>
+    <img class="avatar-editor__img{{#if avatar}}--none{{/if}}" src="../../../static/avatar.svg" alt="avatar" />
+    <input ref="fileInput" type="file" accept="image/*" multiple="multiple" class="avatar-editor__input" />
 </div>

@@ -122,7 +122,7 @@ class HttpTransport {
 
           resolve(response);
         } else {
-          
+
           let response;
           try {
             response = JSON.parse(xhr.responseText);

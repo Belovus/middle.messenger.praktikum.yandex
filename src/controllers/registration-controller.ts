@@ -23,7 +23,11 @@ export class RegistrationController {
   }
 
   onRegistration(data: Record<string, unknown>) {
-    this.model.registration(data).then((result) => console.log(result));
+    this.model.registration(data).then((result) => {
+      if (result) {
+        router.go('/');
+      }
+    });
   }
 
   getModel() {
