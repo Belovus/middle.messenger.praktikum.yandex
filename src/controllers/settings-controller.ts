@@ -3,7 +3,7 @@ import { router } from '../main.ts';
 import type { SettingsView as SettingsViewType } from '../views/settings';
 import type { SettingsModel as SettingsModelType } from '../models/settings-model.ts';
 import type { UserResponse, UserUpdateRequest, ChangePasswordRequest } from '../types/api.ts';
-import { getResourceLink } from "../utils/getResourceLink.ts";
+import { getResourceLink } from '../utils/getResourceLink.ts';
 
 export class SettingsController {
   private view: SettingsViewType;
@@ -44,6 +44,7 @@ export class SettingsController {
 
   onSettingsUpdate(data: UserUpdateRequest) {
     this.model.updateSettings(data).then(() => {
+      this.onLoad();
       this.view.setProps({ edit: false });
     });
   }

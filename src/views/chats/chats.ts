@@ -25,8 +25,7 @@ export class ChatsView extends Block<ChatsViewProps> {
   protected template = ChatsHTML;
 
   protected componentDidMount() {
-    //ToDo Fix me
-    if (this.props.chats?.length === 0) {
+    if (!this.props.chats) {
       this.emit('chats:load');
     }
   }
