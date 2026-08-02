@@ -1,71 +1,110 @@
 <main class="chats">
     <div class="chats__left-panel">
-        <div class="chats__link">
-            <a>Профиль</a>
-            <img src="../../../static/chats-arrow.svg" alt="arrow" />
+        <div class="chats__link-wrapper">
+            <div class="chats__link" ref="settingsLink">
+                <a>Профиль</a>
+                <img src="../../../static/chats-arrow.svg" alt="arrow" />
+            </div>
         </div>
         <div class="chats__filter">
             <label>
                 <input type="text" class="chats__filter-input" placeholder="Поиск" />
             </label>
         </div>
+        <div class="chats__create-chat">
+            <button ref="createChatButton">Создать чат</button>
+        </div>
         <ul class="chats__list">
+            {{#each chats}}
             <div class="chats__divider"></div>
-            {{{ ChatItem }}}
+            {{{ ChatItem
+                id=id
+                title=title
+                message=message
+                time=time
+                avatar=avatar
+                unreadCount=unreadCount
+                selected=selected
+            }}}
+            {{/each}}
+            {{#unless chats.length}}
             <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
-            {{{ ChatItem }}}
-            <div class="chats__divider"></div>
+            {{/unless}}
         </ul>
     </div>
     <div class="chat">
-        <div class="chat__header">
-            <div class="chat__header-avatar"></div>
-            <h3 class="chat__header-name">Вадим</h3>
-            <div class="chat__header-options">
-                <img src="../../../static/profile-header-dots.svg" alt="dots" />
-                <div class="chat__header-options-list-wrapper">
-                    <ul class="chat__header-options-list">
-                       <li>
-                           <div class="chat__header-options-img">
-                               <img src="../../../static/add.svg" alt="add" />
-                           </div>
-                           <span>Добавить пользователя</span>
-                       </li>
-                        <div class="chat__header-options-divider"></div>
-                       <li>
-                           <div class="chat__header-options-img">
-                               <img src="../../../static/delete.svg" alt="delete" />
-                           </div>
-                           <span>Удалить пользователя</span>
-                       </li>
-                    </ul>
+        {{#if selectedChatId}}
+            <div class="chat__header">
+            <div class="chat__header-info" ref="infoOptionsList">
+                <div
+                    class="chat__header-avatar"
+                    {{#if chatAvatar}}style="background-image: url('{{chatAvatar}}'); background-size: cover;"{{/if}}
+                ></div>
+                <div class="chat__header-meta">
+                    <h3 class="chat__header-name">{{ chatTitle }}</h3>
+                    <span class="chat__header-count">Кол-во участников: {{ chatUsersCount }}</span>
                 </div>
             </div>
-        </div>
-        <div class="chat__body">
-            <div class="chat__body-date">
-                <p class="chat__body-date-text">19 июня</p>
+            <div class="chat__header-info-options-list{{#if isHeaderInfoOptionsListOpen}} chat__header-info-options-list--open{{/if}}" ref="infoOptionsListBlock">
+                <div class="chat__header-info-options-list-avatar">
+                    {{{ AvatarEditor size="small" avatar=chatAvatar }}}
+                </div>
+                <ul>
+                    {{#each chatUsers }}
+                        <li>
+                            <div class="chat__header-info-options-list-user-avatar">
+                                <img src="../../../static/avatar.svg" alt="avatar" />
+                            </div>
+                            <div>
+                                <h4 class="chat__header-info-options-list-name">{{ first_name }} {{ second_name }}</h4>
+                                <span>{{ login }}</span>
+                            </div>
+                            <img class="chat__header-info-options-list-cross" src="../../../static/cross-red.svg" alt="cross" data-user-login={{ login }} />
+                        </li>
+                    {{/each}}
+                </ul>
             </div>
-            {{{ Message
-                message="Привет! Смотри, тут всплыл интересный кусок лунной космической истории — НАСА в какой-то момент попросила Хассельблад адаптировать модель SWC для полетов на Луну. Сейчас мы все знаем что астронавты летали с моделью 500 EL — и к слову говоря, все тушки этих камер все еще находятся на поверхности Луны, так как астронавты с собой забрали только кассеты с пленкой.
+            <div class="chat__header-options" ref="headerOptions">
+                <img src="../../../static/profile-header-dots.svg" alt="dots" ref="headerOptionsToggle" />
+                <ul class="chat__header-options-list{{#if isHeaderOptionsListOpen}} chat__header-options-list--open{{/if}}">
+                    <li ref="addUserOption">
+                        <div class="chat__header-options-img">
+                            <img src="../../../static/add.svg" alt="add" />
+                        </div>
+                        <span>Добавить пользователя</span>
+                    </li>
+                    <div class="chat__header-options-divider"></div>
+                    <li ref="removeUserOption">
+                        <div class="chat__header-options-img">
+                            <img src="../../../static/delete.svg" alt="delete" />
+                        </div>
+                        <span>Удалить пользователя</span>
+                    </li>
+                    <div class="chat__header-options-divider"></div>
+                    <li ref="removeChatOption">
+                        <div class="chat__header-options-img">
+                            <img src="../../../static/trash.svg" alt="delete" />
+                        </div>
+                        <span>Удалить чат</span>
+                    </li>
+                </ul>
+            </div>
+            </div>
+            <div class="chat__body">
+                <div class="chat__body-date">
+                    <p class="chat__body-date-text">19 июня</p>
+                </div>
+                {{{ Message
+                    message="Привет! Смотри, тут всплыл интересный кусок лунной космической истории — НАСА в какой-то момент попросила Хассельблад адаптировать модель SWC для полетов на Луну. Сейчас мы все знаем что астронавты летали с моделью 500 EL — и к слову говоря, все тушки этих камер все еще находятся на поверхности Луны, так как астронавты с собой забрали только кассеты с пленкой.
 
-Хассельблад в итоге адаптировал SWC для космоса, но что-то пошло не так и на ракету они так никогда и не попали. Всего их было произведено 25 штук, одну из них недавно продали на аукционе за 45000 евро."
-                time="11:56"
-            }}}
-            {{{ Message message="Круто!" isOwn=true time="12:00" }}}
-        </div>
-        <form class="chat__footer">
-            <div class="chat__footer-options">
-                <div class="chat__footer-option-list-wrapper">
-                    <ul class="chat__footer-options-list">
+    Хассельблад в итоге адаптировал SWC для космоса, но что-то пошло не так и на ракету они так никогда и не попали. Всего их было произведено 25 штук, одну из них недавно продали на аукционе за 45000 евро."
+                    time="11:56"
+                }}}
+                {{{ Message message="Круто!" isOwn=true time="12:00" }}}
+            </div>
+            <form class="chat__footer">
+                <div class="chat__footer-options" ref="bottomOptions">
+                    <ul class="chat__footer-options-list{{#if isBottomOptionsListOpen}} chat__footer-options-list--open{{/if}}">
                         <li>
                             <img src="../../../static/photo-or-video.svg" alt="photo" />
                             <span>Фото или видео</span>
@@ -81,13 +120,50 @@
                             <span>Локация</span>
                         </li>
                     </ul>
+                    <img src="../../../static/profile-footer-clip.svg" alt="clip" ref="bottomOptionsToggle" />
                 </div>
-                <img src="../../../static/profile-footer-clip.svg" alt="clip" />
+                <input type="text" class="chat__footer-input" placeholder="Сообщение" name="message" />
+                <button class="chat__footer-send-button" type="submit">
+                    <img src="../../../static/arrow.svg" alt="send" />
+                </button>
+            </form>
+        {{else}}
+            <div class="chat__placeholder">
+                <span>Выберите чат чтобы отправить сообщение</span>
             </div>
-            <input type="text" class="chat__footer-input" placeholder="Сообщение" name="message" />
-            <button class="chat__footer-send-button" type="submit">
-                <img src="../../../static/arrow.svg" alt="send" />
-            </button>
-        </form>
+        {{/if}}
     </div>
+
+    {{{ Modal
+        isOpen=(equal activeModal "createChat")
+        title="Создать чат"
+        label="Название чата"
+        fieldId="title"
+        buttonText="Создать"
+        crossRef="createChatCross"
+        formRef="createChatForm"
+        fieldRef="title"
+    }}}
+
+    {{{ Modal
+        isOpen=(equal activeModal "addUser")
+        title="Добавить пользователя"
+        label="Логин пользователя"
+        fieldId="login"
+        buttonText="Добавить"
+        crossRef="addUserCross"
+        formRef="addUserForm"
+        fieldRef="login"
+    }}}
+
+    {{{ Modal
+        isOpen=(equal activeModal "removeUser")
+        title="Удалить пользователя"
+        label="Логин пользователя"
+        fieldId="login"
+        buttonText="Удалить"
+        crossRef="removeUserCross"
+        formRef="removeUserForm"
+        fieldRef="removeUserLogin"
+    }}}
 </main>

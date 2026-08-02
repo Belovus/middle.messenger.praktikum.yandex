@@ -1,0 +1,45 @@
+<main class="profile">
+    {{{ BackBar ref="chatsLink" }}}
+    {{{ AvatarEditor avatar=settings.avatar }}}
+    <h2 class="profile__name">{{ settings.first_name }}</h2>
+    <form class="profile__fields" ref="form">
+        {{#if (equal type "SETTINGS")}}
+            {{#each config.settings}}
+                {{{ ProfileFormField
+                        id=id
+                        label=label
+                        ref=id
+                        type=type
+                        edit=../edit
+                        value=(lookup ../settings id)
+                }}}
+            {{/each}}
+        {{/if}}
+        {{#if (equal type "CHANGE_PASSWORD")}}
+            {{#each config.change_password}}
+                {{{ ProfileFormField
+                        id=id
+                        label=label
+                        type=type
+                        ref=id
+                        edit=../edit
+                }}}
+            {{/each}}
+        {{/if}}
+        {{#if edit}}
+            <div class="profile__submit">
+                {{{ Button text="Сохранить" type="submit" }}}
+                <div class="profile__cancel">
+                    {{{ Link text="Отменить" isError=true ref="cancel" }}}
+                </div>
+            </div>
+        {{/if}}
+    </form>
+    <div class="profile__actions">
+        {{#unless edit}}
+            {{{ Link text="Изменить данные" ref="changeSettings" }}}
+            {{{ Link text="Изменить пароль" ref="changePassword" }}}
+            {{{ Link text="Выйти" isError=true ref="exit" }}}
+        {{/unless}}
+    </div>
+</main>
