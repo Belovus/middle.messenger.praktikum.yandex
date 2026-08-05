@@ -48,23 +48,24 @@ export class SettingsView extends Block<SettingsProps> {
     },
     submit: (event: Event) => {
       event.preventDefault();
+      const error = this.validateAll(event);
 
       const formData = new FormData(event.target as HTMLFormElement);
 
-      if (this.props.type === 'SETTINGS') {
-        this.emit('settings:update', formDataToJSON(formData));
-      }
+      if (!error) {
+        if (this.props.type === 'SETTINGS') {
+          this.emit('settings:update', formDataToJSON(formData));
+        }
 
-      if (this.props.type === 'CHANGE_PASSWORD') {
-        this.emit('settings:change-password', formDataToJSON(formData));
-      }
+        if (this.props.type === 'CHANGE_PASSWORD') {
+          this.emit('settings:change-password', formDataToJSON(formData));
+        }
 
-      if (!this.validateAll(event)) {
         this.setProps({ edit: !this.props.edit });
       }
     },
-    focusout: (event: Event) => {
-      this.validateOne(event);
+    focusout: () => {
+      // this.validateOne(event);
     },
     change: (event: Event) => {
       const file = event.target as HTMLInputElement;
