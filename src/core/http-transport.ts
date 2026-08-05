@@ -115,7 +115,7 @@ class HttpTransport {
               } else {
                 response = xhr.responseText;
               }
-            } catch (e) {
+            } catch {
               response = xhr.responseText;
             }
           }
@@ -126,7 +126,7 @@ class HttpTransport {
           let response;
           try {
             response = JSON.parse(xhr.responseText);
-          } catch (e) {
+          } catch {
             response = xhr.responseText;
           }
 
