@@ -34,10 +34,11 @@ export class ChatsModel extends EventBus {
     return ChatsApi.get(`/chats/${chatId}/users`) as Promise<ChatUsersResponse[]>;
   }
 
-  async changeAvatar(data: { chatId: number; avatar: File }) {
-    const formData = new FormData();
-    formData.append('chatId', String(data.chatId))
-    formData.append('avatar', data.avatar);
-    return ChatsApi.put('/chats/avatar', { data: formData });
+  async changeAvatar(data: FormData) {
+    return ChatsApi.put('/chats/avatar', { data: data });
+  }
+
+  async getToken(chatId: number) {
+    return ChatsApi.post(`/chats/token/${chatId}`) as Promise<unknown>;
   }
 }

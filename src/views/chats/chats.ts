@@ -2,24 +2,25 @@ import { Block } from '../../core/block.ts';
 import ChatsHTML from './chats.hbs?raw';
 import { formDataToJSON } from '../../utils/formDataToJSON.ts';
 
-import type { ChatListItem, ChatUsersResponse } from '../../types/api.ts';
+import type { ChatListItem, ChatMessage, ChatUsersResponse } from '../../types/api.ts';
 
-export type ActiveModal = 'createChat' | 'addUser' | 'removeUser' | null;
+export type ActiveModal = 'createChat' | 'addUser' | null;
 
 interface ChatsViewProps {
-  activeModal?: ActiveModal;
-  selectedChatId?: number | null;
-  isHeaderOptionsListOpen?: boolean;
-  isHeaderInfoOptionsListOpen?: boolean;
-  isBottomOptionsListOpen?: boolean;
-  chats?: ChatListItem[];
-  chatUsers?: ChatUsersResponse[];
-  chatUsersCount?: number;
-  chatTitle?: string;
-  chatAvatar?: string;
+  activeModal: ActiveModal;
+  selectedChatId: number | null;
+  isHeaderOptionsListOpen: boolean;
+  isHeaderInfoOptionsListOpen: boolean;
+  isBottomOptionsListOpen: boolean;
+  chats: ChatListItem[];
+  chatUsers: ChatUsersResponse[];
+  chatUsersCount: number;
+  chatTitle: string;
+  chatAvatar: string;
+  messages: ChatMessage[];
 }
 
-export class ChatsView extends Block<ChatsViewProps> {
+export class ChatsView extends Block<Partial<ChatsViewProps>> {
   static componentName = 'Chats';
 
   protected template = ChatsHTML;
@@ -27,6 +28,10 @@ export class ChatsView extends Block<ChatsViewProps> {
   protected componentDidMount() {
     if (!this.props.chats) {
       this.emit('chats:load');
+    }
+
+    if (this.refs.messagesList) {
+      this.refs.messagesList.scrollTop = this.refs.messagesList.scrollHeight;
     }
   }
 
@@ -54,13 +59,9 @@ export class ChatsView extends Block<ChatsViewProps> {
         return;
       }
 
-      if (form === this.refs.removeUserForm) {
-        this.emit('chats:remove-user', formData);
-        return;
-      }
-
       if (formData.message) {
-        console.log(formData.message);
+        this.emit('chats:send-message', { content: String(formData.message) });
+        form.reset();
       }
     },
     click: (event: Event): void => {
@@ -85,11 +86,6 @@ export class ChatsView extends Block<ChatsViewProps> {
 
       if (this.refs.addUserOption?.contains(target)) {
         this.setProps({ activeModal: 'addUser', isHeaderOptionsListOpen: false });
-        return;
-      }
-
-      if (this.refs.removeUserOption?.contains(target)) {
-        this.setProps({ activeModal: 'removeUser', isHeaderOptionsListOpen: false });
         return;
       }
 
@@ -152,7 +148,6 @@ export class ChatsView extends Block<ChatsViewProps> {
     const closeRefs = [
       this.refs.createChatCross,
       this.refs.addUserCross,
-      this.refs.removeUserCross,
     ];
 
     return closeRefs.some((ref) => ref?.contains(target));

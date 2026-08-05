@@ -44,7 +44,10 @@ export abstract class Block<Props = object> extends EventBus {
   }
 
   public setProps(props: Partial<Props>) {
-    this.props = { ...this.props, ...props, __children: [], __refs: {}, __componentRefs: {} } as Props & BlockOwnProps;
+    this.props = { ...this.props, ...props } as Props & BlockOwnProps;
+    delete this.props.__children;
+    delete this.props.__refs;
+    delete this.props.__componentRefs;
     this.render();
   }
 

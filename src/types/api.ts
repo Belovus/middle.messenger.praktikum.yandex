@@ -61,3 +61,28 @@ export interface ChatUsersResponse {
   role: string;
   login: string;
 }
+
+export interface ChatTokenResponse {
+  token: string;
+}
+
+export interface ChatMessageFile {
+  id: number;
+  user_id: number;
+  path: string;
+  filename: string;
+  content_type: string;
+  content_size: number;
+  upload_date: string;
+}
+
+export interface ChatMessage {
+  chat_id?: number;
+  content: string;
+  file?: ChatMessageFile;
+  id: number;
+  isOwn?: boolean;
+  time: string;
+  type: 'message' | 'file' | 'sticker';
+  user_id: number;
+}
