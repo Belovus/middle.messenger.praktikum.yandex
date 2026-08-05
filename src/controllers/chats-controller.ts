@@ -81,6 +81,8 @@ export class ChatsController {
 
     this.view.setProps({
       selectedChatId: chatId,
+      chatTitle: chats.find((chat) => chat.id === chatId)?.title,
+      chatAvatar: chats.find((chat) => chat.id === chatId)?.avatar,
       chats,
     });
 
@@ -204,6 +206,7 @@ export class ChatsController {
       })
       .then(() => {
         this.view.setProps({ activeModal: null });
+        this.loadChats();
       });
   }
 

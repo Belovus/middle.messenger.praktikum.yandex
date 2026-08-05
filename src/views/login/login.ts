@@ -16,7 +16,8 @@ export class LoginView extends Block<LoginProps> {
   protected events = {
     submit: (event: Event) => {
       event.preventDefault();
-      this.validateAll(event);
+      const error = this.validateAll(event);
+      if (error) return;
 
       const loginFormData = new FormData(event.target as HTMLFormElement);
 
