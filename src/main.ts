@@ -2,6 +2,7 @@ import Handlebars from 'handlebars';
 import { registerComponent } from './utils/registerComponent';
 import { Router } from './core/router.ts';
 import { And, Or, Not, Equal } from './utils/handlebars-helpers.ts';
+import { formatTime } from './utils/formatTime.ts';
 
 import { LOGIN_CONFIG } from './configs/login-config';
 import { REGISTRATION_CONFIG } from './configs/registration-config';
@@ -47,6 +48,7 @@ Handlebars.registerHelper('and', And);
 Handlebars.registerHelper('or', Or);
 Handlebars.registerHelper('not', Not);
 Handlebars.registerHelper('equal', Equal);
+Handlebars.registerHelper('formatTime', formatTime);
 
 registerComponent(Button);
 registerComponent(AuthFormField);

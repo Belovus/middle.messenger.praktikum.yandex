@@ -12,8 +12,8 @@ const RULES: Record<string, (value: string) => string | null> = {
   login: (value) => {
     if (!value) return 'Поле не может быть пустым';
     if (value.length < 3 || value.length > 20) return 'От 3 до 20 символов';
-    if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(value)) return 'Может содержать цифры, дефис и подчёркивание';
     if (/^\d+$/.test(value)) return 'Не может состоять только из цифр';
+    if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(value)) return 'Может содержать цифры, дефис и подчёркивание';
     return null;
   },
   email: (value) => {

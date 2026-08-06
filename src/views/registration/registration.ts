@@ -17,14 +17,15 @@ export class RegistrationView extends Block<RegistrationProps> {
     submit: (event: Event) => {
       event.preventDefault();
 
+      const error = this.validateAll(event);
+      if (error) return;
+
       const registrationFormData = new FormData(event.target as HTMLFormElement);
       this.emit('registration:registration', formDataToJSON(registrationFormData));
-
-      this.validateAll(event);
     },
 
-    focusout: (event: Event) => {
-      this.validateOne(event);
+    focusout: () => {
+      // this.validateOne(event);
     },
 
     click: (event: Event) => {

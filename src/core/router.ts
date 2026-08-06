@@ -7,7 +7,7 @@ interface IRoutable {
 
 class Route {
   _pathname: string;
-  _blockClass: () => IRoutable;
+  _blockClass: (() => IRoutable) | IRoutable;
   _block: IRoutable | null;
   _guard: boolean;
   _props: {
@@ -15,7 +15,7 @@ class Route {
   }
 
 
-  constructor(pathname: string, view: () => IRoutable, guard: boolean, props: { rootQuery: string }) {
+  constructor(pathname: string, view: (() => IRoutable) | IRoutable, guard: boolean, props: { rootQuery: string }) {
     this._pathname = pathname;
     this._blockClass = view;
     this._block = null;
@@ -41,7 +41,7 @@ class Route {
   }
 
   render() {
-    this._block = this._blockClass();
+    this._block = typeof this._blockClass === 'function' ? this._blockClass() : this._blockClass;
     const root = document.querySelector(this._props.rootQuery);
     if (root) {
       root.textContent = '';
@@ -75,7 +75,7 @@ export class Router {
     Router.__instance = this;
   }
 
-  use(pathname: string, block: () => IRoutable, guard: boolean) {
+  use(pathname: string, block: (() => IRoutable) | IRoutable, guard: boolean) {
     const route = new Route(pathname, block, guard, { rootQuery: this._rootQuery });
     this.routes.push(route);
     return this;

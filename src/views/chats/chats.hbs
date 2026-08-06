@@ -74,12 +74,6 @@
                         <span>Добавить пользователя</span>
                     </li>
                     <div class="chat__header-options-divider"></div>
-                    <li ref="removeUserOption">
-                        <div class="chat__header-options-img">
-                            <img src="../../../static/delete.svg" alt="delete" />
-                        </div>
-                        <span>Удалить пользователя</span>
-                    </li>
                     <div class="chat__header-options-divider"></div>
                     <li ref="removeChatOption">
                         <div class="chat__header-options-img">
@@ -91,16 +85,15 @@
             </div>
             </div>
             <div class="chat__body">
-                <div class="chat__body-date">
-                    <p class="chat__body-date-text">19 июня</p>
+                <div class="chat__body-messages" ref="messagesList">
+                    {{#each messages}}
+                    {{{ Message
+                        message=content
+                        time=(formatTime time)
+                        isOwn=isOwn
+                    }}}
+                    {{/each}}
                 </div>
-                {{{ Message
-                    message="Привет! Смотри, тут всплыл интересный кусок лунной космической истории — НАСА в какой-то момент попросила Хассельблад адаптировать модель SWC для полетов на Луну. Сейчас мы все знаем что астронавты летали с моделью 500 EL — и к слову говоря, все тушки этих камер все еще находятся на поверхности Луны, так как астронавты с собой забрали только кассеты с пленкой.
-
-    Хассельблад в итоге адаптировал SWC для космоса, но что-то пошло не так и на ракету они так никогда и не попали. Всего их было произведено 25 штук, одну из них недавно продали на аукционе за 45000 евро."
-                    time="11:56"
-                }}}
-                {{{ Message message="Круто!" isOwn=true time="12:00" }}}
             </div>
             <form class="chat__footer">
                 <div class="chat__footer-options" ref="bottomOptions">
@@ -154,16 +147,5 @@
         crossRef="addUserCross"
         formRef="addUserForm"
         fieldRef="login"
-    }}}
-
-    {{{ Modal
-        isOpen=(equal activeModal "removeUser")
-        title="Удалить пользователя"
-        label="Логин пользователя"
-        fieldId="login"
-        buttonText="Удалить"
-        crossRef="removeUserCross"
-        formRef="removeUserForm"
-        fieldRef="removeUserLogin"
     }}}
 </main>

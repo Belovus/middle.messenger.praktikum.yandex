@@ -1,14 +1,18 @@
 import { router } from '../main.ts';
+import AuthController from './auth-controller.ts';
+import SocketTransport from '../core/socket-transport.ts';
 
 import type { ChatsView as ChatsViewType } from '../views/chats';
 import type { ChatsModel as ChatsModelType } from '../models/chats-model';
-import type { Chat, ChatLastMessage, ChatListItem } from '../types/api.ts';
+import type { Chat, ChatLastMessage, ChatListItem, ChatMessage, ChatTokenResponse } from '../types/api.ts';
 import { formatTime } from '../utils/formatTime.ts';
 import { getResourceLink } from '../utils/getResourceLink.ts';
 
 export class ChatsController {
   private view: ChatsViewType;
   private model: ChatsModelType;
+  private currentSocket: SocketTransport | null = null;
+  private messages: ChatMessage[] = [];
 
   constructor(model: ChatsModelType, view: ChatsViewType) {
     this.model = model;
@@ -49,6 +53,10 @@ export class ChatsController {
     this.view.on('chats:change-avatar', (data) => {
       this.onChangeAvatar(data as { chatId: number, avatar: File });
     })
+
+    this.view.on('chats:send-message', (data) => {
+      this.onSendMessage(data as { content: string });
+    })
   }
 
   loadChats() {
@@ -73,8 +81,103 @@ export class ChatsController {
 
     this.view.setProps({
       selectedChatId: chatId,
+      chatTitle: chats.find((chat) => chat.id === chatId)?.title,
+      chatAvatar: chats.find((chat) => chat.id === chatId)?.avatar,
       chats,
     });
+
+    this.connectToChat(chatId);
+  }
+
+  private connectToChat(chatId: number) {
+    this.disconnectFromChat();
+    this.messages = [];
+
+    const user = AuthController.getUser() as { id: number } | null;
+
+    if (!user) {
+      return;
+    }
+
+    this.model.getToken(chatId)
+      .then((data) => {
+        const token = (data as ChatTokenResponse[])[0]?.token ?? (data as ChatTokenResponse).token;
+
+        if (!token) {
+          throw new Error('Failed to get chat token');
+        }
+
+        this.currentSocket = new SocketTransport({ userId: user.id, chatId, token });
+        this.bindSocketEvents();
+        this.currentSocket.connect();
+        this.currentSocket.requestOldMessages(0);
+      })
+      .catch((error) => {
+        console.error('Failed to connect to chat:', error);
+      });
+  }
+
+  private bindSocketEvents() {
+    const socket = this.currentSocket;
+
+    if (!socket) {
+      return;
+    }
+
+    socket.on('message', (message) => {
+      this.onNewMessage(message as ChatMessage);
+    });
+
+    socket.on('list', (list) => {
+      this.onHistory(list as ChatMessage[]);
+    });
+  }
+
+  private onNewMessage(message: ChatMessage) {
+    const user = AuthController.getUser() as { id: number } | null;
+    const isOwn = user?.id === message.user_id;
+
+    const enriched = { ...message, isOwn };
+    const existing = this.messages.find((msg) => msg.id === enriched.id);
+
+    if (existing) {
+      return;
+    }
+
+    this.messages.push(enriched);
+    this.updateMessages();
+  }
+
+  private onHistory(messages: ChatMessage[]) {
+    const user = AuthController.getUser() as { id: number } | null;
+    const normalized = messages
+      .slice()
+      .reverse()
+      .map((message) => ({ ...message, isOwn: user?.id === message.user_id }));
+
+    this.messages = normalized;
+    this.updateMessages();
+  }
+
+  private updateMessages() {
+    this.view.setProps({ messages: this.messages });
+  }
+
+  private disconnectFromChat() {
+    if (this.currentSocket) {
+      this.currentSocket.close();
+      this.currentSocket = null;
+    }
+  }
+
+  private onSendMessage(data: { content: string }) {
+    const content = data.content?.trim();
+
+    if (!content || !this.currentSocket) {
+      return;
+    }
+
+    this.currentSocket.sendMessage(content);
   }
 
   onCreateChat(data: { title: string }) {
@@ -103,6 +206,7 @@ export class ChatsController {
       })
       .then(() => {
         this.view.setProps({ activeModal: null });
+        this.loadChats();
       });
   }
 
@@ -136,7 +240,10 @@ export class ChatsController {
   }
 
   onChangeAvatar({ chatId, avatar }: { chatId: number, avatar: File }) {
-    this.model.changeAvatar({ chatId, avatar }).then((chat) => {
+    const formData = new FormData();
+    formData.append('chatId', String(chatId))
+    formData.append('avatar', avatar);
+    this.model.changeAvatar(formData).then((chat) => {
       const avatar = (chat as Chat).avatar;
       this.view.setProps({ chatAvatar: getResourceLink(avatar) });
       this.loadChats();
