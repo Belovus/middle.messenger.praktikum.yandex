@@ -28,13 +28,27 @@
 
   &__filter {
     position: relative;
+    display: flex;
     width: 100%;
     margin-top: 20px;
     padding: 0 10px;
+
+    label {
+      width: calc(100% - 42px);
+    }
   }
 
-  &__create-chat {
-    padding: 10px 10px 0;
+  &__filter-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-left: auto;
+
+    img {
+      width: 16px;
+    }
   }
 
   &__filter-input {
@@ -105,13 +119,15 @@
 
   &__header-info-options-list {
     position: absolute;
-    display: none;
     top: calc(100% + 10px);
     left: 0;
     background: var(--color-text-on-primary);
     box-shadow: var(--shadow-card);
     border-radius: 8px;
     padding: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
 
     ul {
       list-style: none;
@@ -130,7 +146,9 @@
     }
 
     &--open {
-      display: block;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s linear 0s;
     }
   }
 
@@ -190,10 +208,14 @@
     width: 25px;
     height: 25px;
     border-radius: 12.5px;
+
+    img {
+      user-select: none;
+    }
   }
 
   &__header-options-list {
-    display: none;
+    display: flex;
     position: absolute;
     top: calc(100% + 30px);
     right: 0;
@@ -205,9 +227,15 @@
     padding-left: 0;
     list-style: none;
     margin: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
 
     &--open {
-      display: flex;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s linear 0s;
     }
 
     li {
@@ -280,10 +308,14 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+
+    img {
+      user-select: none;
+    }
   }
 
   &__footer-options-list {
-    display: none;
+    display: flex;
     position: absolute;
     left: 0;
     bottom: calc(100% + 20px);
@@ -297,9 +329,14 @@
     white-space: nowrap;
     margin: 0;
     overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
 
     &--open {
-      display: flex;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s linear 0s;
     }
 
     li {

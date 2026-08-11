@@ -6,24 +6,24 @@ import type { Chat, ChatUsersResponse } from '../types/api.ts';
 const ChatsApi = new HttpTransport();
 
 export class ChatsModel extends EventBus {
-  async getChats() {
-    return ChatsApi.get('/chats') as Promise<Chat[]>;
+  async getChats(data?: { title: string }) {
+    return ChatsApi.get('/chats', { data }) as Promise<Chat[]>;
   }
 
   async createChat(data: { title: string }) {
-    return ChatsApi.post('/chats', { data: data as Record<string, unknown> });
+    return ChatsApi.post('/chats', { data });
   }
 
   async searchUser(data: { login: string }) {
-    return ChatsApi.post('/user/search', { data: data as Record<string, unknown> });
+    return ChatsApi.post('/user/search', { data });
   }
 
   async addUsersToChat(data: { users: number[]; chatId: number }) {
-    return ChatsApi.put('/chats/users', { data: data as Record<string, unknown> });
+    return ChatsApi.put('/chats/users', { data });
   }
 
   async removeUsersFromChat(data: { users: number[]; chatId: number }) {
-    return ChatsApi.delete('/chats/users', { data: data as Record<string, unknown> });
+    return ChatsApi.delete('/chats/users', { data });
   }
 
   async removeChat(chatId: number) {

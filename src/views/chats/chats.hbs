@@ -8,11 +8,11 @@
         </div>
         <div class="chats__filter">
             <label>
-                <input type="text" class="chats__filter-input" placeholder="Поиск" />
+                <input type="text" class="chats__filter-input" placeholder="Поиск" ref="chatSearchInput" />
             </label>
-        </div>
-        <div class="chats__create-chat">
-            <button ref="createChatButton">Создать чат</button>
+            <button class="chats__filter-button" ref="createChatButton">
+                <img src="../../../static/add-white.svg" alt="add" />
+            </button>
         </div>
         <ul class="chats__list">
             {{#each chats}}
@@ -38,22 +38,27 @@
             <div class="chat__header-info" ref="infoOptionsList">
                 <div
                     class="chat__header-avatar"
-                    {{#if chatAvatar}}style="background-image: url('{{chatAvatar}}'); background-size: cover;"{{/if}}
+                    {{#if selectedChat.avatar}}style="background-image: url('{{selectedChat.avatar}}'); background-size: cover;"{{/if}}
                 ></div>
                 <div class="chat__header-meta">
-                    <h3 class="chat__header-name">{{ chatTitle }}</h3>
+                    <h3 class="chat__header-name">{{ selectedChat.title }}</h3>
                     <span class="chat__header-count">Кол-во участников: {{ chatUsersCount }}</span>
                 </div>
             </div>
-            <div class="chat__header-info-options-list{{#if isHeaderInfoOptionsListOpen}} chat__header-info-options-list--open{{/if}}" ref="infoOptionsListBlock">
+            <div class="chat__header-info-options-list" ref="infoOptionsListBlock">
                 <div class="chat__header-info-options-list-avatar">
-                    {{{ AvatarEditor size="small" avatar=chatAvatar }}}
+                    {{{ AvatarEditor size="small" avatar=selectedChat.avatar }}}
                 </div>
                 <ul>
                     {{#each chatUsers }}
                         <li>
-                            <div class="chat__header-info-options-list-user-avatar">
-                                <img src="../../../static/avatar.svg" alt="avatar" />
+                            <div class="chat__header-info-options-list-user-avatar" {{#if avatar}}style="background-image: url('{{avatar}}'); background-size: cover;"{{/if}}>
+                                {{#unless avatar}}
+                                    <img
+                                        src="../../../static/avatar.svg"
+                                        alt="avatar"
+                                    />
+                                {{/unless}}
                             </div>
                             <div>
                                 <h4 class="chat__header-info-options-list-name">{{ first_name }} {{ second_name }}</h4>
@@ -64,16 +69,15 @@
                     {{/each}}
                 </ul>
             </div>
-            <div class="chat__header-options" ref="headerOptions">
-                <img src="../../../static/profile-header-dots.svg" alt="dots" ref="headerOptionsToggle" />
-                <ul class="chat__header-options-list{{#if isHeaderOptionsListOpen}} chat__header-options-list--open{{/if}}">
+            <div class="chat__header-options" ref="headerOptionsToggle">
+                <img src="../../../static/profile-header-dots.svg" alt="dots" />
+                <ul class="chat__header-options-list" ref="headerOptionsToggleBlock">
                     <li ref="addUserOption">
                         <div class="chat__header-options-img">
                             <img src="../../../static/add.svg" alt="add" />
                         </div>
                         <span>Добавить пользователя</span>
                     </li>
-                    <div class="chat__header-options-divider"></div>
                     <div class="chat__header-options-divider"></div>
                     <li ref="removeChatOption">
                         <div class="chat__header-options-img">
@@ -97,7 +101,7 @@
             </div>
             <form class="chat__footer">
                 <div class="chat__footer-options" ref="bottomOptions">
-                    <ul class="chat__footer-options-list{{#if isBottomOptionsListOpen}} chat__footer-options-list--open{{/if}}">
+                    <ul class="chat__footer-options-list" ref="bottomOptionsToggleBlock">
                         <li>
                             <img src="../../../static/photo-or-video.svg" alt="photo" />
                             <span>Фото или видео</span>

@@ -26,20 +26,22 @@
                 }}}
             {{/each}}
         {{/if}}
-        {{#if edit}}
-            <div class="profile__submit">
-                {{{ Button text="Сохранить" type="submit" }}}
-                <div class="profile__cancel">
-                    {{{ Link text="Отменить" isError=true ref="cancel" }}}
+        <div class="profile__control">
+            {{#if edit}}
+                <div class="profile__submit">
+                    {{{ Button text="Сохранить" type="submit" }}}
+                    <div class="profile__cancel">
+                        {{{ Link text="Отменить" isError=true ref="cancel" }}}
+                    </div>
                 </div>
-            </div>
-        {{/if}}
+            {{/if}}
+            {{#unless edit}}
+                <div class="profile__actions">
+                    {{{ Link text="Изменить данные" ref="changeSettings" }}}
+                    {{{ Link text="Изменить пароль" ref="changePassword" }}}
+                    {{{ Link text="Выйти" isError=true ref="exit" }}}
+                </div>
+            {{/unless}}
+        </div>
     </form>
-    <div class="profile__actions">
-        {{#unless edit}}
-            {{{ Link text="Изменить данные" ref="changeSettings" }}}
-            {{{ Link text="Изменить пароль" ref="changePassword" }}}
-            {{{ Link text="Выйти" isError=true ref="exit" }}}
-        {{/unless}}
-    </div>
 </main>
