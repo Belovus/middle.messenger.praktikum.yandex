@@ -13,6 +13,7 @@ export class ChatsController {
   private model: ChatsModelType;
   private currentSocket: SocketTransport | null = null;
   private messages: ChatMessage[] = [];
+  private searchTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(model: ChatsModelType, view: ChatsViewType) {
     this.model = model;
@@ -57,6 +58,14 @@ export class ChatsController {
     this.view.on('chats:send-message', (data) => {
       this.onSendMessage(data as { content: string });
     })
+
+    this.view.on('chats:search-chat', (title) => {
+      this.onSearch(title as string);
+    })
+
+    // this.view.on('chats:search-users', (searchText) => {
+    //   this.onSearchUser(searchText as string);
+    // })
   }
 
   loadChats() {
@@ -74,16 +83,17 @@ export class ChatsController {
       ...chat,
       selected: chat.id === chatId,
     }));
+    const selectedChat = chats.find((chat) => chat.id === chatId);
 
     this.model.getChatUsers(chatId).then((users) => {
-      this.view.setProps({ chatUsers: users, chatUsersCount: users.length });
+      const chatUsers = users.map((user) => ({ ...user, avatar: getResourceLink(user.avatar) }));
+      this.view.setProps({ chatUsers, chatUsersCount: users.length });
     })
 
     this.view.setProps({
       selectedChatId: chatId,
-      chatTitle: chats.find((chat) => chat.id === chatId)?.title,
-      chatAvatar: chats.find((chat) => chat.id === chatId)?.avatar,
       chats,
+      selectedChat,
     });
 
     this.connectToChat(chatId);
@@ -244,29 +254,57 @@ export class ChatsController {
     formData.append('chatId', String(chatId))
     formData.append('avatar', avatar);
     this.model.changeAvatar(formData).then((chat) => {
+      const selectedChat = this.view.getSelectedChat();
       const avatar = (chat as Chat).avatar;
-      this.view.setProps({ chatAvatar: getResourceLink(avatar) });
+      this.view.setProps({ selectedChat: { ...selectedChat!, avatar: getResourceLink(avatar) } });
       this.loadChats();
     })
   }
+
+  onSearch(title: string) {
+    if (this.searchTimeoutId) {
+      clearTimeout(this.searchTimeoutId);
+    }
+
+    this.searchTimeoutId = setTimeout(() => {
+      this.model.getChats({ title }).then((chats) => {
+        this.updateChatsList(chats);
+      });
+    }, 300);
+  }
+
+  // onSearchUser(searchText: string) {
+  //   this.model.searchUser({ login: searchText }).then((users) => {
+  //     console.log(users);
+  //   })
+  // }
 
   private updateChatsList(chats: Chat[]) {
     const currentSelectedId = this.view.getSelectedChatId();
     const selectedChatId = chats.some(chat => chat.id === currentSelectedId)
       ? currentSelectedId
       : (chats[0]?.id ?? null);
-    const chatList = chats.map((chat) => this.mapChatToListItem(chat, selectedChatId));
+    if (chats.length === 0) {
+      this.view.setProps({
+        chats: [],
+        selectedChat: [],
+        selectedChatId: null,
+      });
 
-    if (selectedChatId) {
-      this.onSelectChat(selectedChatId);
+      return;
     }
+    const selectedChat = chats.find((chat) => chat.id === selectedChatId);
+    const chatList = chats.map((chat) => this.mapChatToListItem(chat, selectedChatId));
 
     this.view.setProps({
       chats: chatList,
       selectedChatId: selectedChatId,
-      chatTitle: chatList.find((chat) => chat.id === selectedChatId)?.title,
-      chatAvatar: chatList.find((chat) => chat.id === selectedChatId)?.avatar,
+      selectedChat: this.mapChatToListItem(selectedChat!, selectedChatId),
     });
+
+    if (selectedChatId) {
+      this.onSelectChat(selectedChatId);
+    }
   }
 
   private mapChatToListItem(chat: Chat, selectedChatId: number | null): ChatListItem {

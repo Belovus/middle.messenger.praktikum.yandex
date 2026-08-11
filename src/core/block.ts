@@ -22,6 +22,10 @@ export abstract class Block<Props = object> extends EventBus {
 
   private domElement: Element | null = null;
 
+  private isRendering = false;
+
+  private pendingProps: Partial<Props> | null = null;
+
   protected children: Block<object>[] = [];
 
   protected refs: Record<string, Element> = {};
@@ -48,6 +52,12 @@ export abstract class Block<Props = object> extends EventBus {
     delete this.props.__children;
     delete this.props.__refs;
     delete this.props.__componentRefs;
+
+    if (this.isRendering) {
+      this.pendingProps = { ...this.pendingProps, ...props };
+      return;
+    }
+
     this.render();
   }
 
@@ -109,13 +119,53 @@ export abstract class Block<Props = object> extends EventBus {
   }
 
   protected render() {
-    this.unmountComponent();
-    const fragment = this.compile();
-    if (this.domElement && fragment) {
-      this.domElement.replaceWith(fragment);
+    this.isRendering = true;
+
+    try {
+      const activeEl = document.activeElement;
+      const focusedRef = activeEl && this.domElement?.contains(activeEl)
+        ? Object.entries(this.refs).find(([, el]) => el.contains(activeEl))?.[0]
+        : undefined;
+      const hasSelection = activeEl && 'selectionStart' in activeEl && 'selectionEnd' in activeEl;
+      const selectionStart = hasSelection
+        ? (activeEl as HTMLInputElement).selectionStart
+        : null;
+      const selectionEnd = hasSelection
+        ? (activeEl as HTMLInputElement).selectionEnd
+        : null;
+
+      this.unmountComponent();
+      const fragment = this.compile();
+      if (this.domElement && fragment) {
+        if (this.domElement.isConnected) {
+          this.domElement.replaceWith(fragment);
+        } else if (this.domElement.parentNode) {
+          this.domElement.parentNode.replaceChild(fragment, this.domElement);
+        }
+      }
+      this.domElement = fragment;
+      this.mountComponent();
+
+      if (focusedRef && this.refs[focusedRef]) {
+        const el = this.refs[focusedRef] as unknown as HTMLInputElement & { focus?: () => void };
+        if ('setSelectionRange' in el && typeof el.focus === 'function') {
+          el.focus();
+          if (selectionStart !== null && selectionEnd !== null) {
+            el.setSelectionRange(selectionStart, selectionEnd);
+          }
+        } else if (typeof el.focus === 'function') {
+          el.focus();
+        }
+      }
+    } finally {
+      this.isRendering = false;
+
+      if (this.pendingProps) {
+        const pending = this.pendingProps;
+        this.pendingProps = null;
+        this.setProps(pending);
+      }
     }
-    this.domElement = fragment;
-    this.mountComponent();
   }
 
   private compile(): Element | null {

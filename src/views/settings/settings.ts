@@ -17,6 +17,8 @@ export class SettingsView extends Block<SettingsProps> {
 
   protected template = SettingsHTML;
 
+  private isSubmitting = false;
+
   protected componentDidMount() {
     if (!this.props.settings) {
       this.emit('settings:load');
@@ -48,7 +50,9 @@ export class SettingsView extends Block<SettingsProps> {
     },
     submit: (event: Event) => {
       event.preventDefault();
+      this.isSubmitting = true;
       const error = this.validateAll(event);
+      this.isSubmitting = false;
 
       const formData = new FormData(event.target as HTMLFormElement);
 
@@ -64,12 +68,12 @@ export class SettingsView extends Block<SettingsProps> {
         this.setProps({ edit: !this.props.edit });
       }
     },
-    focusout: () => {
-      // this.validateOne(event);
+    focusout: (event: Event) => {
+      if (this.isSubmitting) return;
+      this.validateOne(event);
     },
     change: (event: Event) => {
       const file = event.target as HTMLInputElement;
-      console.log(file.files);
       if (file.files) {
         this.emit('settings:change-avatar', { avatar: file.files[0] });
       }
