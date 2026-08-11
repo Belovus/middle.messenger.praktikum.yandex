@@ -12,8 +12,18 @@
     }
   }
 
-  &__submit {
+  &__control {
+    width: 100%;
+    min-height: 140px;
     margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  &__submit {
+    width: 100%;
   }
 
   &__cancel {
@@ -26,9 +36,12 @@
 
   &__actions {
     width: 100%;
-    margin-top: 30px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+  }
+
+  &__name {
+    min-height: 30px;
   }
 }

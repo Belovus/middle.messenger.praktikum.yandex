@@ -3,6 +3,14 @@ import { Block } from './block';
 
 type MockFn = ReturnType<typeof vi.fn>;
 
+interface MockInputNode extends MockNode {
+  focus: MockFn;
+  setSelectionRange: MockFn;
+  selectionStart: number;
+  selectionEnd: number;
+  contains: MockFn;
+}
+
 interface MockNode {
   listeners: Map<string, (e: Event) => void>;
   addEventListener: MockFn;
@@ -10,6 +18,11 @@ interface MockNode {
   replaceWith: MockFn;
   removeAttribute: MockFn;
   getAttribute: MockFn;
+  contains?: MockFn;
+  focus?: MockFn;
+  setSelectionRange?: MockFn;
+  isConnected: boolean;
+  parentNode: MockNode | null;
 }
 
 interface TemplateMock {
@@ -40,6 +53,9 @@ function makeNode(): MockNode {
     replaceWith: vi.fn(),
     removeAttribute: vi.fn(),
     getAttribute: vi.fn(() => null),
+    contains: vi.fn(() => false),
+    isConnected: true,
+    parentNode: null,
   };
   allNodes.push(node);
   return node;
@@ -54,6 +70,16 @@ function makeTemplate(queryResult: MockNode[] = []): TemplateMock {
     },
     innerHTML: '',
   };
+}
+
+function makeInputNode(): MockInputNode {
+  const node = makeNode() as MockInputNode;
+  node.focus = vi.fn();
+  node.setSelectionRange = vi.fn();
+  node.selectionStart = 3;
+  node.selectionEnd = 3;
+  node.contains = vi.fn((el: unknown) => el === node);
+  return node;
 }
 
 function installDocument() {
@@ -170,5 +196,82 @@ describe('Block', () => {
 
     expect(block['refs'].login).toBe(refNode);
     expect(refNode.removeAttribute).toHaveBeenCalledWith('ref');
+  });
+
+  it('setProps() восстанавливает фокус и позицию курсора в ref после перерендера', () => {
+    const oldInput = makeInputNode();
+    const newInput = makeInputNode();
+
+    const oldRoot = makeNode();
+    oldRoot.contains = vi.fn((el: unknown) => el === oldInput);
+
+    const newRoot = makeNode();
+    newRoot.contains = vi.fn((el: unknown) => el === newInput);
+
+    const oldTemplate = makeTemplate();
+    oldTemplate.content.firstElementChild = oldRoot;
+    (oldTemplate.content.querySelectorAll as MockFn).mockReturnValue([oldInput]);
+    oldInput.getAttribute.mockReturnValue('searchInput');
+
+    const newTemplate = makeTemplate();
+    newTemplate.content.firstElementChild = newRoot;
+    (newTemplate.content.querySelectorAll as MockFn).mockReturnValue([newInput]);
+    newInput.getAttribute.mockReturnValue('searchInput');
+
+    let renderCount = 0;
+    (globalThis as unknown as {
+      document: {
+        createElement: (tag: string) => TemplateMock;
+        activeElement: MockInputNode;
+      };
+    }).document = {
+      createElement: () => {
+        renderCount += 1;
+        return renderCount === 1 ? oldTemplate : newTemplate;
+      },
+      activeElement: oldInput,
+    };
+
+    class SearchBlock extends Block {
+      protected template = '<div><input ref="searchInput" /></div>';
+    }
+
+    const block = new SearchBlock({});
+    block.element();
+
+    Object.defineProperty(globalThis.document, 'activeElement', {
+      configurable: true,
+      get: () => oldInput,
+    });
+
+    block.setProps({});
+
+    expect(newInput.focus).toHaveBeenCalled();
+    expect(newInput.setSelectionRange).toHaveBeenCalledWith(3, 3);
+  });
+
+  it('setProps() во время render накапливает изменения и применяет их после', () => {
+    const block = new TestBlock({ name: 'Vasya' });
+    block.element();
+    const previousRoot = allNodes[0];
+
+    previousRoot.replaceWith.mockImplementation(() => {
+      block.setProps({ age: 30 });
+    });
+
+    block.setProps({ name: 'Petya' });
+
+    expect((block as unknown as BlockAccess).props).toEqual({ name: 'Petya', age: 30 });
+    expect(allNodes.length).toBe(3);
+  });
+
+  it('render() не падает если domElement уже отсоединён от DOM', () => {
+    const block = new TestBlock({ name: 'Vasya' });
+    block.element();
+    allNodes[0].isConnected = false;
+
+    expect(() => block.setProps({ age: 30 })).not.toThrow();
+    expect(allNodes[0].replaceWith).not.toHaveBeenCalled();
+    expect(allNodes.length).toBe(2);
   });
 });

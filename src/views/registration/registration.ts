@@ -13,19 +13,23 @@ export class RegistrationView extends Block<RegistrationProps> {
 
   protected template = RegistrationHTML;
 
+  private isSubmitting = false;
+
   protected events = {
     submit: (event: Event) => {
       event.preventDefault();
-
+      this.isSubmitting = true;
       const error = this.validateAll(event);
+      this.isSubmitting = false;
       if (error) return;
 
       const registrationFormData = new FormData(event.target as HTMLFormElement);
       this.emit('registration:registration', formDataToJSON(registrationFormData));
     },
 
-    focusout: () => {
-      // this.validateOne(event);
+    focusout: (event: Event) => {
+      if (this.isSubmitting) return;
+      this.validateOne(event);
     },
 
     click: (event: Event) => {

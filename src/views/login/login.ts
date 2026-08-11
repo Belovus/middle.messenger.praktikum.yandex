@@ -13,10 +13,15 @@ export class LoginView extends Block<LoginProps> {
 
   protected template = LoginHTML;
 
+  // для уменьшения числа перерисовок
+  private isSubmitting = false;
+
   protected events = {
     submit: (event: Event) => {
       event.preventDefault();
+      this.isSubmitting = true;
       const error = this.validateAll(event);
+      this.isSubmitting = false;
       if (error) return;
 
       const loginFormData = new FormData(event.target as HTMLFormElement);
@@ -30,5 +35,9 @@ export class LoginView extends Block<LoginProps> {
         this.emit('login:go-registration');
       }
     },
+    focusout: (event: Event) => {
+      if (this.isSubmitting) return;
+      this.validateOne(event);
+    }
   }
 }
